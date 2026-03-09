@@ -970,3 +970,718 @@ interface FaqCacheStore {
 }
 ```
 
+
+## UX Flow Design
+
+### Mobile-First Screen Flows
+
+**1. Onboarding Flow**
+
+```
+[Language Selection] 
+    ↓
+[Mobile Number Entry]
+    ↓
+[OTP Verification]
+    ↓
+[Regime Selection Screen]
+    ↓
+[Dashboard]
+```
+
+**Screen Specifications:**
+
+- **Language Selection**: Grid of 7 language cards with native script, auto-detect based on device locale
+- **Mobile Number Entry**: Single input with country code (+91), numeric keyboard, validation on blur
+- **OTP Verification**: 6-digit input with auto-focus, resend after 30s, 3 attempts max
+- **Regime Selection**: Side-by-side comparison cards with "Learn More" links to chat assistant
+
+**2. Document Upload Flow**
+
+```
+[Dashboard]
+    ↓
+[Upload Type Selection] (Form-16 / AIS / Bank Statement)
+    ↓
+[File Picker / Camera]
+    ↓
+[Upload Progress] (with offline queue indicator)
+    ↓
+[Processing Status] (WebSocket real-time updates)
+    ↓
+[Extraction Complete] → [Data Review]
+```
+
+**Offline Behavior:**
+- Files queued in IndexedDB with visual "Queued for Upload" badge
+- Background sync triggers upload when online
+- User can continue to next step with manual entry if needed
+
+**3. Data Review and Correction Flow**
+
+```
+[Extraction Complete]
+    ↓
+[Review Screen: Split View]
+    ├─ Left: Document Image (pinch-to-zoom)
+    └─ Right: Extracted Fields (editable)
+    ↓
+[Field Validation] (real-time as user types)
+    ↓
+[Completeness Check] (progress bar at top)
+    ↓
+[Anomaly Warnings] (modal with "Override" or "Fix" options)
+    ↓
+[Confirm Review] → [Tax Calculation]
+```
+
+**Validation Points:**
+- Mandatory fields: Red border + error message below field
+- Warnings: Yellow border + warning icon with tooltip
+- Low confidence (<85%): Blue border + "AI extracted, please verify" badge
+- User edits: Green highlight to show modification
+
+
+**4. Tax Calculation Flow**
+
+```
+[Data Review Complete]
+    ↓
+[Regime Comparison Screen]
+    ├─ Old Regime Card (with deductions breakdown)
+    └─ New Regime Card (with rebate info)
+    ↓
+[Select Regime] (tap to select, shows savings)
+    ↓
+[Deduction Details] (expandable sections for 80C, 80D, HRA)
+    ↓
+[Final Tax Summary]
+    ↓
+[Export Options]
+```
+
+**Offline Capability:**
+- Full calculation runs locally using cached tax rules
+- Regime comparison updates in real-time as user edits deductions
+- No network required for this entire flow
+
+**5. Chat Assistant Flow**
+
+```
+[Any Screen with "?" icon]
+    ↓
+[Chat Overlay] (bottom sheet on mobile)
+    ↓
+[User Question]
+    ↓
+[AI Response] (with sources and "Was this helpful?" feedback)
+    ↓
+[Contextual Actions] (e.g., "Add this deduction", "Learn more about 80C")
+```
+
+**Offline Behavior:**
+- FAQ cache serves common questions instantly
+- "You're offline" message with cached responses available
+- Questions queued for when online
+
+**6. Export Flow**
+
+```
+[Tax Summary]
+    ↓
+[Export Options Screen]
+    ├─ Download JSON for IT Portal
+    └─ Download PDF Summary
+    ↓
+[Validation Check] (schema validation)
+    ↓
+[Preview Screen] (JSON structure or PDF preview)
+    ↓
+[Download] (triggers browser download)
+    ↓
+[Success Confirmation] (with instructions for IT Portal upload)
+```
+
+**Offline Capability:**
+- JSON generation works offline
+- PDF generation works offline using client-side library
+- Files saved to device storage
+
+### Error Handling UX
+
+**Network Errors:**
+- Toast notification: "You're offline. Changes saved locally."
+- Persistent banner at top when offline with sync status
+- Retry button for failed operations
+
+**Validation Errors:**
+- Inline error messages below fields
+- Scroll to first error on form submission
+- Error summary card at top of form
+
+**Extraction Errors:**
+- "Extraction failed" modal with options: "Retry" or "Enter Manually"
+- Partial extraction: Show extracted fields + empty fields for manual entry
+- Low confidence: Visual indicator + "Please verify" message
+
+**Sync Conflicts:**
+- Modal showing server value vs local value
+- "Keep Local" or "Use Server" buttons
+- Timestamp of each version displayed
+
+
+## Tech Stack Integration
+
+### Frontend Integration
+
+**React + TypeScript + Tailwind CSS:**
+
+```typescript
+// Component structure with TypeScript interfaces
+interface TaxFormProps {
+  initialData: ExtractedData;
+  onSave: (data: TaxFormData) => Promise<void>;
+  validationRules: ValidationRules;
+}
+
+// Tailwind CSS for responsive design
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+  <Card className="bg-white shadow-md rounded-lg p-6">
+    {/* Old Regime */}
+  </Card>
+  <Card className="bg-white shadow-md rounded-lg p-6">
+    {/* New Regime */}
+  </Card>
+</div>
+
+// Mobile-first breakpoints
+// sm: 640px, md: 768px, lg: 1024px, xl: 1280px
+```
+
+**Service Worker + IndexedDB Integration:**
+
+```typescript
+// Service Worker registration
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').then(registration => {
+    console.log('SW registered:', registration);
+  });
+}
+
+// Workbox caching strategies
+import { precacheAndRoute } from 'workbox-precaching';
+import { registerRoute } from 'workbox-routing';
+import { CacheFirst, NetworkFirst } from 'workbox-strategies';
+
+// Precache app shell
+precacheAndRoute(self.__WB_MANIFEST);
+
+// API calls: Network first with cache fallback
+registerRoute(
+  ({ url }) => url.pathname.startsWith('/api/'),
+  new NetworkFirst({
+    cacheName: 'api-cache',
+    networkTimeoutSeconds: 10,
+  })
+);
+
+// Static assets: Cache first
+registerRoute(
+  ({ request }) => request.destination === 'image',
+  new CacheFirst({ cacheName: 'images' })
+);
+
+// Background Sync for offline operations
+self.addEventListener('sync', event => {
+  if (event.tag === 'sync-tax-data') {
+    event.waitUntil(syncPendingRequests());
+  }
+});
+```
+
+**IndexedDB with Dexie.js:**
+
+```typescript
+import Dexie, { Table } from 'dexie';
+
+class TaxMitraDB extends Dexie {
+  profiles!: Table<ProfileStore>;
+  taxSessions!: Table<TaxSessionStore>;
+  pendingRequests!: Table<PendingRequestStore>;
+
+  constructor() {
+    super('bharatTaxMitraDB');
+    this.version(1).stores({
+      profiles: 'userId, mobileNumber',
+      taxSessions: 'sessionId, userId, [userId+status]',
+      pendingRequests: 'requestId, timestamp',
+      savedDrafts: 'draftId, sessionId',
+      taxRules: 'financialYear',
+      languagePacks: 'languageCode',
+      faqCache: 'questionHash, languageCode'
+    });
+  }
+}
+
+export const db = new TaxMitraDB();
+
+// Usage in components
+const saveDraft = async (sessionId: string, formData: object) => {
+  await db.savedDrafts.put({
+    draftId: `${sessionId}-${Date.now()}`,
+    sessionId,
+    formData,
+    savedAt: Date.now(),
+    autoSave: true
+  });
+};
+```
+
+**Web Crypto API for Client-Side Encryption:**
+
+```typescript
+// Generate encryption key from device-specific data
+async function generateEncryptionKey(): Promise<CryptoKey> {
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(await getDeviceId()),
+    { name: 'PBKDF2' },
+    false,
+    ['deriveBits', 'deriveKey']
+  );
+  
+  return crypto.subtle.deriveKey(
+    {
+      name: 'PBKDF2',
+      salt: new TextEncoder().encode('bharat-tax-mitra-salt'),
+      iterations: 100000,
+      hash: 'SHA-256'
+    },
+    keyMaterial,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['encrypt', 'decrypt']
+  );
+}
+
+// Encrypt sensitive data before storing in IndexedDB
+async function encryptData(data: string): Promise<string> {
+  const key = await generateEncryptionKey();
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const encrypted = await crypto.subtle.encrypt(
+    { name: 'AES-GCM', iv },
+    key,
+    new TextEncoder().encode(data)
+  );
+  
+  return JSON.stringify({
+    iv: Array.from(iv),
+    data: Array.from(new Uint8Array(encrypted))
+  });
+}
+```
+
+
+### Backend Integration
+
+**Lambda + Step Functions + DynamoDB Orchestration:**
+
+```typescript
+// Step Functions definition (AWS CDK)
+const documentProcessingStateMachine = new sfn.StateMachine(this, 'DocumentProcessing', {
+  definition: sfn.Chain
+    .start(new tasks.LambdaInvoke(this, 'StartExtraction', {
+      lambdaFunction: extractionLambda,
+      outputPath: '$.Payload',
+    }))
+    .next(new tasks.LambdaInvoke(this, 'DetectPII', {
+      lambdaFunction: piiDetectionLambda,
+      outputPath: '$.Payload',
+    }))
+    .next(new tasks.LambdaInvoke(this, 'EnhanceWithAI', {
+      lambdaFunction: bedrockEnhancementLambda,
+      outputPath: '$.Payload',
+    }))
+    .next(new tasks.LambdaInvoke(this, 'ValidateAndStore', {
+      lambdaFunction: validationLambda,
+      outputPath: '$.Payload',
+    }))
+    .next(new tasks.LambdaInvoke(this, 'NotifyClient', {
+      lambdaFunction: notificationLambda,
+    }))
+});
+
+// Lambda function with DynamoDB integration
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { DynamoDBDocumentClient, PutCommand, GetCommand } from '@aws-sdk/lib-dynamodb';
+
+const ddbClient = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+
+export const handler = async (event: any) => {
+  const { userId, sessionId, extractedData } = event;
+  
+  // Store with TTL
+  await ddbClient.send(new PutCommand({
+    TableName: process.env.SESSIONS_TABLE,
+    Item: {
+      userId,
+      sessionId,
+      extractedData,
+      createdAt: Date.now(),
+      expiresAt: Math.floor(Date.now() / 1000) + 86400 // 24 hours
+    }
+  }));
+  
+  return { statusCode: 200, body: 'Success' };
+};
+```
+
+**Textract + Bedrock + Knowledge Bases Integration:**
+
+```typescript
+// Textract extraction
+import { TextractClient, AnalyzeDocumentCommand } from '@aws-sdk/client-textract';
+
+const textractClient = new TextractClient({});
+
+async function extractFromDocument(s3Bucket: string, s3Key: string) {
+  const command = new AnalyzeDocumentCommand({
+    Document: { S3Object: { Bucket: s3Bucket, Name: s3Key } },
+    FeatureTypes: ['FORMS', 'TABLES']
+  });
+  
+  const response = await textractClient.send(command);
+  
+  // Parse key-value pairs
+  const keyValuePairs = parseTextractResponse(response);
+  return keyValuePairs;
+}
+
+// Bedrock enhancement
+import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime';
+
+const bedrockClient = new BedrockRuntimeClient({});
+
+async function enhanceExtraction(rawExtraction: Record<string, any>) {
+  const prompt = `You are a tax document expert. Review this extracted data from a Form-16 and:
+1. Validate field values are reasonable
+2. Fill in missing fields if inferable
+3. Flag anomalies
+
+Extracted data: ${JSON.stringify(rawExtraction)}
+
+Return JSON with: { validated: {...}, anomalies: [...], confidence: 0-100 }`;
+
+  const command = new InvokeModelCommand({
+    modelId: 'anthropic.claude-3-sonnet-20240229-v1:0',
+    contentType: 'application/json',
+    accept: 'application/json',
+    body: JSON.stringify({
+      anthropic_version: 'bedrock-2023-05-31',
+      max_tokens: 2000,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  
+  const response = await bedrockClient.send(command);
+  const result = JSON.parse(new TextDecoder().decode(response.body));
+  return JSON.parse(result.content[0].text);
+}
+
+// Knowledge Base RAG for chat
+import { BedrockAgentRuntimeClient, RetrieveAndGenerateCommand } from '@aws-sdk/client-bedrock-agent-runtime';
+
+const kbClient = new BedrockAgentRuntimeClient({});
+
+async function answerTaxQuestion(question: string, context?: any) {
+  const command = new RetrieveAndGenerateCommand({
+    input: { text: question },
+    retrieveAndGenerateConfiguration: {
+      type: 'KNOWLEDGE_BASE',
+      knowledgeBaseConfiguration: {
+        knowledgeBaseId: process.env.KB_ID,
+        modelArn: 'arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0'
+      }
+    }
+  });
+  
+  const response = await kbClient.send(command);
+  return {
+    answer: response.output?.text,
+    sources: response.citations?.map(c => c.retrievedReferences).flat()
+  };
+}
+```
+
+**Comprehend + KMS for Privacy:**
+
+```typescript
+// PII detection with Comprehend
+import { ComprehendClient, DetectPiiEntitiesCommand } from '@aws-sdk/client-comprehend';
+
+const comprehendClient = new ComprehendClient({});
+
+async function detectPII(text: string) {
+  const command = new DetectPiiEntitiesCommand({
+    Text: text,
+    LanguageCode: 'en'
+  });
+  
+  const response = await comprehendClient.send(command);
+  return response.Entities?.filter(e => e.Score && e.Score > 0.8) || [];
+}
+
+// KMS encryption
+import { KMSClient, EncryptCommand, DecryptCommand } from '@aws-sdk/client-kms';
+
+const kmsClient = new KMSClient({});
+
+async function encryptPII(data: string): Promise<string> {
+  const command = new EncryptCommand({
+    KeyId: process.env.KMS_KEY_ID,
+    Plaintext: Buffer.from(data)
+  });
+  
+  const response = await kmsClient.send(command);
+  return Buffer.from(response.CiphertextBlob!).toString('base64');
+}
+
+async function decryptPII(encryptedData: string): Promise<string> {
+  const command = new DecryptCommand({
+    CiphertextBlob: Buffer.from(encryptedData, 'base64')
+  });
+  
+  const response = await kmsClient.send(command);
+  return Buffer.from(response.Plaintext!).toString('utf-8');
+}
+```
+
+**AppConfig for Tax Rules Management:**
+
+```typescript
+// AppConfig client
+import { AppConfigDataClient, GetLatestConfigurationCommand, StartConfigurationSessionCommand } from '@aws-sdk/client-appconfigdata';
+
+const appConfigClient = new AppConfigDataClient({});
+let configToken: string | undefined;
+
+async function getTaxRules(financialYear: string): Promise<TaxRules> {
+  // Start session if no token
+  if (!configToken) {
+    const startSession = new StartConfigurationSessionCommand({
+      ApplicationIdentifier: process.env.APPCONFIG_APP_ID,
+      EnvironmentIdentifier: process.env.APPCONFIG_ENV_ID,
+      ConfigurationProfileIdentifier: `tax-rules-${financialYear}`
+    });
+    const sessionResponse = await appConfigClient.send(startSession);
+    configToken = sessionResponse.InitialConfigurationToken;
+  }
+  
+  // Get latest configuration
+  const getConfig = new GetLatestConfigurationCommand({
+    ConfigurationToken: configToken
+  });
+  const response = await appConfigClient.send(getConfig);
+  configToken = response.NextPollConfigurationToken;
+  
+  if (response.Configuration) {
+    const config = JSON.parse(new TextDecoder().decode(response.Configuration));
+    return config;
+  }
+  
+  throw new Error('Failed to load tax rules');
+}
+
+// Cache tax rules in Lambda memory
+let cachedRules: TaxRules | null = null;
+let cacheTimestamp = 0;
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+export async function getTaxRulesWithCache(financialYear: string): Promise<TaxRules> {
+  if (cachedRules && Date.now() - cacheTimestamp < CACHE_TTL) {
+    return cachedRules;
+  }
+  
+  cachedRules = await getTaxRules(financialYear);
+  cacheTimestamp = Date.now();
+  return cachedRules;
+}
+```
+
+
+### Logging and Audit Architecture
+
+**CloudWatch Logging Strategy:**
+
+```typescript
+// Structured logging without PII
+import { Logger } from '@aws-lambda-powertools/logger';
+
+const logger = new Logger({ serviceName: 'bharat-tax-mitra' });
+
+// Safe logging - no PII
+logger.info('Document uploaded', {
+  userId: hashUserId(userId), // Hash instead of raw ID
+  documentType: 'form16',
+  fileSize: file.size,
+  timestamp: Date.now()
+});
+
+// Audit event logging
+async function logAuditEvent(event: AuditEvent) {
+  await ddbClient.send(new PutCommand({
+    TableName: process.env.AUDIT_TABLE,
+    Item: {
+      userId: event.userId,
+      eventTimestamp: Date.now(),
+      eventType: event.type,
+      eventDetails: {
+        action: event.action,
+        resource: event.resource,
+        // No PII in details
+      },
+      ipAddress: hashIP(event.ipAddress),
+      userAgent: event.userAgent,
+      success: event.success,
+      expiresAt: Math.floor(Date.now() / 1000) + (90 * 86400) // 90 days
+    }
+  }));
+  
+  logger.info('Audit event logged', {
+    eventType: event.type,
+    success: event.success
+  });
+}
+
+// Error logging with context
+try {
+  await processDocument(uploadId);
+} catch (error) {
+  logger.error('Document processing failed', {
+    uploadId: hashId(uploadId),
+    errorType: error.name,
+    errorMessage: error.message,
+    // Stack trace in CloudWatch but no PII
+  });
+  throw error;
+}
+```
+
+**CloudWatch Metrics:**
+
+```typescript
+import { MetricUnits } from '@aws-lambda-powertools/metrics';
+import { Metrics } from '@aws-lambda-powertools/metrics';
+
+const metrics = new Metrics({ namespace: 'BharatTaxMitra' });
+
+// Track extraction success rate
+metrics.addMetric('ExtractionSuccess', MetricUnits.Count, 1);
+metrics.addMetric('ExtractionFailure', MetricUnits.Count, 0);
+
+// Track extraction confidence
+metrics.addMetric('ExtractionConfidence', MetricUnits.Percent, confidenceScore);
+
+// Track API latency
+metrics.addMetric('TextractLatency', MetricUnits.Milliseconds, duration);
+
+// Track offline sync
+metrics.addMetric('OfflineSyncSuccess', MetricUnits.Count, 1);
+```
+
+**X-Ray Tracing:**
+
+```typescript
+import { captureAWSv3Client } from 'aws-xray-sdk-core';
+
+// Wrap AWS SDK clients for tracing
+const tracedDDBClient = captureAWSv3Client(new DynamoDBClient({}));
+const tracedTextractClient = captureAWSv3Client(new TextractClient({}));
+
+// Custom subsegments for business logic
+import * as AWSXRay from 'aws-xray-sdk-core';
+
+async function processDocument(uploadId: string) {
+  const segment = AWSXRay.getSegment();
+  const subsegment = segment?.addNewSubsegment('DocumentProcessing');
+  
+  try {
+    subsegment?.addAnnotation('uploadId', hashId(uploadId));
+    subsegment?.addAnnotation('documentType', 'form16');
+    
+    const result = await extractData(uploadId);
+    
+    subsegment?.addMetadata('extractionResult', {
+      fieldsExtracted: result.fields.length,
+      confidence: result.confidence
+    });
+    
+    subsegment?.close();
+    return result;
+  } catch (error) {
+    subsegment?.addError(error);
+    subsegment?.close();
+    throw error;
+  }
+}
+```
+
+**TTL Verification and Deletion Audit:**
+
+```typescript
+// Lambda triggered by CloudWatch Events (daily)
+export const verifyTTLDeletions = async () => {
+  const yesterday = Math.floor(Date.now() / 1000) - 86400;
+  
+  // Query items that should have been deleted
+  const response = await ddbClient.send(new QueryCommand({
+    TableName: process.env.SESSIONS_TABLE,
+    IndexName: 'ExpiresAtIndex',
+    KeyConditionExpression: 'expiresAt < :yesterday',
+    ExpressionAttributeValues: { ':yesterday': yesterday }
+  }));
+  
+  if (response.Items && response.Items.length > 0) {
+    logger.error('TTL deletion failed', {
+      itemCount: response.Items.length,
+      oldestExpiry: response.Items[0].expiresAt
+    });
+    
+    // Alert administrators
+    await sendAlert('TTL_DELETION_FAILED', {
+      table: process.env.SESSIONS_TABLE,
+      itemCount: response.Items.length
+    });
+  } else {
+    logger.info('TTL deletions verified', {
+      checkTimestamp: Date.now()
+    });
+  }
+};
+
+// S3 lifecycle verification
+import { S3Client, ListObjectsV2Command } from '@aws-sdk/client-s3';
+
+const s3Client = new S3Client({});
+
+export const verifyS3Lifecycle = async () => {
+  const oneDayAgo = Date.now() - 86400000;
+  
+  const response = await s3Client.send(new ListObjectsV2Command({
+    Bucket: process.env.RAW_DOCUMENTS_BUCKET,
+    MaxKeys: 1000
+  }));
+  
+  const oldObjects = response.Contents?.filter(obj => 
+    obj.LastModified && obj.LastModified.getTime() < oneDayAgo
+  );
+  
+  if (oldObjects && oldObjects.length > 0) {
+    logger.error('S3 lifecycle policy failed', {
+      bucket: process.env.RAW_DOCUMENTS_BUCKET,
+      oldObjectCount: oldObjects.length
+    });
+  }
+};
+```
+
