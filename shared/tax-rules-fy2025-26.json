@@ -1,0 +1,215 @@
+{
+  "version": "1.0.0",
+  "financialYear": "FY2025-26",
+  "assessmentYear": "AY2026-27",
+  "effectiveFrom": "2025-04-01",
+  "effectiveTo": "2026-03-31",
+  "oldRegime": {
+    "name": "Old Tax Regime",
+    "slabs": [
+      {
+        "min": 0,
+        "max": 250000,
+        "rate": 0,
+        "description": "Income up to ₹2.5 lakh"
+      },
+      {
+        "min": 250001,
+        "max": 500000,
+        "rate": 5,
+        "description": "Income from ₹2.5 lakh to ₹5 lakh"
+      },
+      {
+        "min": 500001,
+        "max": 1000000,
+        "rate": 20,
+        "description": "Income from ₹5 lakh to ₹10 lakh"
+      },
+      {
+        "min": 1000001,
+        "max": null,
+        "rate": 30,
+        "description": "Income above ₹10 lakh"
+      }
+    ],
+    "surcharge": {
+      "thresholds": [
+        {
+          "min": 5000000,
+          "max": 10000000,
+          "rate": 10,
+          "description": "10% surcharge for income ₹50L - ₹1Cr"
+        },
+        {
+          "min": 10000001,
+          "max": 20000000,
+          "rate": 15,
+          "description": "15% surcharge for income ₹1Cr - ₹2Cr"
+        },
+        {
+          "min": 20000001,
+          "max": 50000000,
+          "rate": 25,
+          "description": "25% surcharge for income ₹2Cr - ₹5Cr"
+        },
+        {
+          "min": 50000001,
+          "max": null,
+          "rate": 37,
+          "description": "37% surcharge for income above ₹5Cr"
+        }
+      ]
+    },
+    "cess": 4,
+    "deductions": {
+      "section80C": {
+        "limit": 150000,
+        "description": "LIC, PPF, ELSS, NSC, Home Loan Principal, etc.",
+        "items": [
+          "Life Insurance Premium",
+          "Public Provident Fund (PPF)",
+          "Equity Linked Savings Scheme (ELSS)",
+          "National Savings Certificate (NSC)",
+          "Home Loan Principal Repayment",
+          "Tuition Fees (2 children)",
+          "Sukanya Samriddhi Yojana",
+          "Senior Citizen Savings Scheme",
+          "5-Year Fixed Deposit"
+        ]
+      },
+      "section80CCD1B": {
+        "limit": 50000,
+        "description": "Additional NPS contribution (over and above 80C)"
+      },
+      "section80D": {
+        "self": 25000,
+        "selfSenior": 50000,
+        "parents": 25000,
+        "parentsSenior": 50000,
+        "description": "Health insurance premiums",
+        "preventiveHealthCheckup": 5000
+      },
+      "section80E": {
+        "limit": null,
+        "description": "Interest on education loan (no upper limit)"
+      },
+      "section80G": {
+        "limit": null,
+        "description": "Donations to charitable institutions (50% or 100% based on institution)"
+      },
+      "standardDeduction": {
+        "limit": 50000,
+        "description": "Standard deduction for salaried employees"
+      },
+      "hra": {
+        "metroPercentage": 50,
+        "nonMetroPercentage": 40,
+        "rentThresholdPercentage": 10,
+        "description": "House Rent Allowance exemption"
+      }
+    }
+  },
+  "newRegime": {
+    "name": "New Tax Regime",
+    "slabs": [
+      {
+        "min": 0,
+        "max": 300000,
+        "rate": 0,
+        "description": "Income up to ₹3 lakh"
+      },
+      {
+        "min": 300001,
+        "max": 600000,
+        "rate": 5,
+        "description": "Income from ₹3 lakh to ₹6 lakh"
+      },
+      {
+        "min": 600001,
+        "max": 900000,
+        "rate": 10,
+        "description": "Income from ₹6 lakh to ₹9 lakh"
+      },
+      {
+        "min": 900001,
+        "max": 1200000,
+        "rate": 15,
+        "description": "Income from ₹9 lakh to ₹12 lakh"
+      },
+      {
+        "min": 1200001,
+        "max": 1500000,
+        "rate": 20,
+        "description": "Income from ₹12 lakh to ₹15 lakh"
+      },
+      {
+        "min": 1500001,
+        "max": null,
+        "rate": 30,
+        "description": "Income above ₹15 lakh"
+      }
+    ],
+    "surcharge": {
+      "thresholds": [
+        {
+          "min": 5000000,
+          "max": 10000000,
+          "rate": 10,
+          "description": "10% surcharge for income ₹50L - ₹1Cr"
+        },
+        {
+          "min": 10000001,
+          "max": 20000000,
+          "rate": 15,
+          "description": "15% surcharge for income ₹1Cr - ₹2Cr"
+        },
+        {
+          "min": 20000001,
+          "max": 50000000,
+          "rate": 25,
+          "description": "25% surcharge for income ₹2Cr - ₹5Cr"
+        },
+        {
+          "min": 50000001,
+          "max": null,
+          "rate": 37,
+          "description": "37% surcharge for income above ₹5Cr"
+        }
+      ]
+    },
+    "cess": 4,
+    "rebate87A": {
+      "incomeThreshold": 700000,
+      "maxRebate": 25000,
+      "description": "Rebate under Section 87A for income up to ₹7 lakh"
+    },
+    "deductions": {
+      "standardDeduction": {
+        "limit": 50000,
+        "description": "Standard deduction for salaried employees (only deduction allowed)"
+      }
+    }
+  },
+  "presumptiveTaxation": {
+    "section44AD": {
+      "threshold": 20000000,
+      "digitalRate": 6,
+      "cashRate": 8,
+      "description": "Presumptive taxation for businesses with turnover < ₹2 crore"
+    },
+    "section44ADA": {
+      "threshold": 5000000,
+      "rate": 50,
+      "description": "Presumptive taxation for professionals with receipts < ₹50 lakh"
+    }
+  },
+  "validationRules": {
+    "maxTDSPercentage": 50,
+    "maxHRAPercentage": 50,
+    "maxDeductionPercentage": 100,
+    "minAge": 18,
+    "maxAge": 100,
+    "seniorCitizenAge": 60,
+    "superSeniorCitizenAge": 80
+  }
+}
