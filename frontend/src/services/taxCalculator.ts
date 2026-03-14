@@ -3,10 +3,102 @@ import type {
   IncomeData,
   DeductionData,
   TaxCalculationResult,
+  RegimeComparisonResult,
 } from '../../../shared/types/tax-calculation';
 
 export class TaxCalculator {
   constructor(private taxRules: TaxRules) {}
+
+  /**
+   * Calculate tax under New Regime
+   */
+  calculateNewRegime(income: IncomeData, deductions: DeductionData): TaxCalculationResult {
+    // Step 1: Calculate Gross Total Income
+    const grossTotalIncome = this.calculateGrossTotalIncome(income);
+    const incomeBreakdown = this.getIncomeBreakdown(income);
+
+    // Step 2: Calculate deductions (only standard deduction in new regime)
+    const standardDeduction = this.taxRules.newRegime.deductions.standardDeduction.limit;
+    const totalDeductions = standardDeduction;
+
+    const deductionBreakdown = {
+      section80C: 0,
+      section80CCD1B: 0,
+      section80D: 0,
+      section80E: 0,
+      section80G: 0,
+      hra: 0,
+      standardDeduction: Math.round(standardDeduction),
+    };
+
+    // Step 3: Calculate Taxable Income
+    const taxableIncome = Math.max(0, grossTotalIncome - totalDeductions);
+
+    // Step 4: Calculate slab-wise tax
+    const slabWiseTax = this.calculateSlabWiseTax(
+      taxableIncome,
+      this.taxRules.newRegime.slabs
+    );
+    const taxBeforeSurcharge = slabWiseTax.reduce((sum, slab) => sum + slab.tax, 0);
+
+    // Step 5: Calculate surcharge
+    const { surcharge, surchargeRate } = this.calculateSurcharge(
+      taxableIncome,
+      taxBeforeSurcharge,
+      this.taxRules.newRegime.surcharge.thresholds
+    );
+    const taxAfterSurcharge = taxBeforeSurcharge + surcharge;
+
+    // Step 6: Calculate cess
+    const cessRate = this.taxRules.newRegime.cess;
+    const cess = Math.round((taxAfterSurcharge * cessRate) / 100);
+
+    // Step 7: Calculate Section 87A rebate
+    const rebate87A = this.calculateRebate87A(taxableIncome, taxAfterSurcharge + cess);
+
+    // Step 8: Calculate total tax liability (after rebate)
+    const totalTaxLiability = Math.max(0, taxAfterSurcharge + cess - rebate87A);
+
+    // Step 9: Calculate effective tax rate and take-home
+    const effectiveTaxRate = grossTotalIncome > 0 
+      ? (totalTaxLiability / grossTotalIncome) * 100 
+      : 0;
+    const takeHomeIncome = grossTotalIncome - totalTaxLiability;
+
+    return {
+      regime: 'new',
+      grossTotalIncome: Math.round(grossTotalIncome),
+      incomeBreakdown,
+      totalDeductions: Math.round(totalDeductions),
+      deductionBreakdown,
+      taxableIncome: Math.round(taxableIncome),
+      slabWiseTax,
+      taxBeforeSurcharge: Math.round(taxBeforeSurcharge),
+      surcharge: Math.round(surcharge),
+      surchargeRate,
+      taxAfterSurcharge: Math.round(taxAfterSurcharge),
+      cess: Math.round(cess),
+      cessRate,
+      rebate87A: Math.round(rebate87A),
+      totalTaxLiability: Math.round(totalTaxLiability),
+      effectiveTaxRate: Number(effectiveTaxRate.toFixed(2)),
+      takeHomeIncome: Math.round(takeHomeIncome),
+    };
+  }
+
+  /**
+   * Calculate Section 87A rebate (New Regime only)
+   * Rebate: Up to ₹25,000 for income ≤ ₹7 lakh
+   */
+  private calculateRebate87A(taxableIncome: number, taxLiability: number): number {
+    const rebateConfig = this.taxRules.newRegime.rebate87A;
+
+    if (taxableIncome <= rebateConfig.incomeThreshold) {
+      return Math.min(taxLiability, rebateConfig.maxRebate);
+    }
+
+    return 0;
+  }
 
   /**
    * Calculate tax under Old Regime
@@ -72,6 +164,81 @@ export class TaxCalculator {
   }
 
   /**
+   * Compare tax liability under both Old and New regimes
+   * Provides recommendation and analysis
+   */
+  compareRegimes(income: IncomeData, deductions: DeductionData): RegimeComparisonResult {
+    // Calculate tax under both regimes
+    const oldRegime = this.calculateOldRegime(income, deductions);
+    const newRegime = this.calculateNewRegime(income, deductions);
+
+    // Determine recommended regime (lower tax liability)
+    const recommendedRegime = oldRegime.totalTaxLiability <= newRegime.totalTaxLiability ? 'old' : 'new';
+    
+    // Calculate savings
+    const savings = Math.abs(oldRegime.totalTaxLiability - newRegime.totalTaxLiability);
+    const higherTax = Math.max(oldRegime.totalTaxLiability, newRegime.totalTaxLiability);
+    const savingsPercentage = higherTax > 0 ? (savings / higherTax) * 100 : 0;
+
+    // Calculate deductions lost in new regime
+    const deductionsLost = oldRegime.totalDeductions - newRegime.totalDeductions;
+
+    // Generate analysis
+    const oldRegimeBenefits: string[] = [];
+    const newRegimeBenefits: string[] = [];
+
+    // Old regime benefits
+    if (oldRegime.totalDeductions > 100000) {
+      oldRegimeBenefits.push(`You can claim ₹${oldRegime.totalDeductions.toLocaleString('en-IN')} in deductions`);
+    }
+    if (oldRegime.deductionBreakdown.section80C > 0) {
+      oldRegimeBenefits.push(`Section 80C deductions: ₹${oldRegime.deductionBreakdown.section80C.toLocaleString('en-IN')}`);
+    }
+    if (oldRegime.deductionBreakdown.hra > 0) {
+      oldRegimeBenefits.push(`HRA exemption: ₹${oldRegime.deductionBreakdown.hra.toLocaleString('en-IN')}`);
+    }
+    if (oldRegime.deductionBreakdown.section80D > 0) {
+      oldRegimeBenefits.push(`Health insurance deduction: ₹${oldRegime.deductionBreakdown.section80D.toLocaleString('en-IN')}`);
+    }
+
+    // New regime benefits
+    if (newRegime.rebate87A && newRegime.rebate87A > 0) {
+      newRegimeBenefits.push(`Section 87A rebate: ₹${newRegime.rebate87A.toLocaleString('en-IN')}`);
+    }
+    if (newRegime.effectiveTaxRate < oldRegime.effectiveTaxRate) {
+      newRegimeBenefits.push(`Lower effective tax rate: ${newRegime.effectiveTaxRate.toFixed(2)}% vs ${oldRegime.effectiveTaxRate.toFixed(2)}%`);
+    }
+    newRegimeBenefits.push('Simpler tax filing with fewer deductions to track');
+    if (newRegime.taxableIncome <= 700000) {
+      newRegimeBenefits.push('Eligible for full tax rebate under Section 87A');
+    }
+
+    // Generate recommendation text
+    let recommendation: string;
+    if (recommendedRegime === 'old') {
+      recommendation = `Old Regime is recommended. You will save ₹${savings.toLocaleString('en-IN')} (${savingsPercentage.toFixed(1)}%) by utilizing available deductions.`;
+    } else if (savings > 5000) {
+      recommendation = `New Regime is recommended. You will save ₹${savings.toLocaleString('en-IN')} (${savingsPercentage.toFixed(1)}%) with lower tax rates.`;
+    } else {
+      recommendation = `Both regimes result in similar tax liability (difference: ₹${savings.toLocaleString('en-IN')}). Consider the New Regime for simpler filing.`;
+    }
+
+    return {
+      oldRegime,
+      newRegime,
+      recommendedRegime,
+      savings: Math.round(savings),
+      savingsPercentage: Number(savingsPercentage.toFixed(2)),
+      deductionsLost: Math.round(deductionsLost),
+      analysis: {
+        oldRegimeBenefits,
+        newRegimeBenefits,
+        recommendation,
+      },
+    };
+  }
+
+  /**
    * Calculate Gross Total Income from all sources
    */
   private calculateGrossTotalIncome(income: IncomeData): number {
@@ -94,7 +261,24 @@ export class TaxCalculator {
 
     // Business income
     if (income.businessIncome) {
-      total += income.businessIncome.grossReceipts - income.businessIncome.expenses;
+      // Check if Section 44AD presumptive taxation applies
+      if (income.businessIncome.digitalReceipts > 0 || income.businessIncome.cashReceipts > 0) {
+        const presumptiveIncome = this.calculatePresumptiveIncome(
+          income.businessIncome.digitalReceipts,
+          income.businessIncome.cashReceipts
+        );
+        
+        // Use presumptive income if eligible, otherwise use actual income
+        if (presumptiveIncome > 0) {
+          total += presumptiveIncome;
+        } else {
+          // Turnover exceeds ₹2 crore, use actual income
+          total += income.businessIncome.grossReceipts - income.businessIncome.expenses;
+        }
+      } else {
+        // No digital/cash receipts specified, use actual income
+        total += income.businessIncome.grossReceipts - income.businessIncome.expenses;
+      }
     }
 
     // Capital gains
@@ -133,7 +317,22 @@ export class TaxCalculator {
           )
         : 0,
       businessIncome: income.businessIncome
-        ? Math.round(income.businessIncome.grossReceipts - income.businessIncome.expenses)
+        ? (() => {
+            // Check if Section 44AD presumptive taxation applies
+            if (income.businessIncome.digitalReceipts > 0 || income.businessIncome.cashReceipts > 0) {
+              const presumptiveIncome = this.calculatePresumptiveIncome(
+                income.businessIncome.digitalReceipts,
+                income.businessIncome.cashReceipts
+              );
+              
+              // Use presumptive income if eligible, otherwise use actual income
+              if (presumptiveIncome > 0) {
+                return Math.round(presumptiveIncome);
+              }
+            }
+            // Use actual income
+            return Math.round(income.businessIncome.grossReceipts - income.businessIncome.expenses);
+          })()
         : 0,
       capitalGains: income.capitalGains
         ? Math.round(income.capitalGains.shortTerm + income.capitalGains.longTerm)
@@ -243,6 +442,33 @@ export class TaxCalculator {
 
     // Return minimum of three options
     return Math.max(0, Math.min(option1, option2, option3));
+  }
+
+  /**
+   * Calculate presumptive income under Section 44AD
+   * For businesses with turnover < ₹2 crore
+   * @param digitalReceipts - Digital/online receipts
+   * @param cashReceipts - Cash receipts
+   * @returns Presumptive income (6% of digital + 8% of cash)
+   */
+  private calculatePresumptiveIncome(
+    digitalReceipts: number,
+    cashReceipts: number
+  ): number {
+    const rules = this.taxRules.presumptiveTaxation.section44AD;
+    const totalReceipts = digitalReceipts + cashReceipts;
+
+    // Check if eligible for Section 44AD (turnover < ₹2 crore)
+    if (totalReceipts > rules.threshold) {
+      // Not eligible for presumptive taxation
+      return 0;
+    }
+
+    // Calculate presumptive income: 6% of digital + 8% of cash
+    const digitalIncome = digitalReceipts * (rules.digitalRate / 100);
+    const cashIncome = cashReceipts * (rules.cashRate / 100);
+
+    return digitalIncome + cashIncome;
   }
 
   /**
