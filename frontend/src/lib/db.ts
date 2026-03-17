@@ -101,20 +101,109 @@ export class BharatTaxMitraDB extends Dexie {
       faqCache: 'questionHash, [languageCode+questionHash], expiresAt',
     });
   }
+
+  // Language preference helpers
+  async getLanguagePreference(): Promise<string | null> {
+    try {
+      const profiles = await this.profiles.toArray();
+      if (profiles.length > 0) {
+        return profiles[0].languageCode;
+      }
+      return null;
+    } catch (error) {
+      console.error('Failed to get language preference:', error);
+      return null;
+    }
+  }
+
+  async saveLanguagePreference(languageCode: string): Promise<void> {
+    try {
+      const profiles = await this.profiles.toArray();
+      if (profiles.length > 0) {
+        // Update existing profile
+        await this.profiles.update(profiles[0].userId, {
+          languageCode,
+          updatedAt: Date.now(),
+        });
+      } else {
+        // Create temporary profile for language preference
+        await this.profiles.add({
+          userId: 'temp-' + Date.now(),
+          mobileNumber: '',
+          languageCode,
+          preferredRegime: 'new',
+          lastSyncTimestamp: Date.now(),
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+        });
+      }
+    } catch (error) {
+      console.error('Failed to save language preference:', error);
+    }
+  }
+
+  // Profile management with encryption
+  async saveProfile(profile: Omit<UserProfile, 'mobileNumber' | 'authToken' | 'refreshToken'> & {
+    mobileNumber: string;
+    authToken?: string;
+    refreshToken?: string;
+  }): Promise<void> {
+    try {
+      // Encrypt sensitive fields
+      const encryptedProfile: UserProfile = {
+        ...profile,
+        mobileNumber: await encryptData(profile.mobileNumber),
+        authToken: profile.authToken ? await encryptData(profile.authToken) : undefined,
+        refreshToken: profile.refreshToken ? await encryptData(profile.refreshToken) : undefined,
+      };
+
+      await this.profiles.put(encryptedProfile);
+    } catch (error) {
+      console.error('Failed to save profile:', error);
+      throw error;
+    }
+  }
+
+  async getProfile(userId: string): Promise<(Omit<UserProfile, 'mobileNumber' | 'authToken' | 'refreshToken'> & {
+    mobileNumber: string;
+    authToken?: string;
+    refreshToken?: string;
+  }) | null> {
+    try {
+      const encryptedProfile = await this.profiles.get(userId);
+      if (!encryptedProfile) {
+        return null;
+      }
+
+      // Decrypt sensitive fields
+      return {
+        ...encryptedProfile,
+        mobileNumber: await decryptData(encryptedProfile.mobileNumber),
+        authToken: encryptedProfile.authToken ? await decryptData(encryptedProfile.authToken) : undefined,
+        refreshToken: encryptedProfile.refreshToken ? await decryptData(encryptedProfile.refreshToken) : undefined,
+      };
+    } catch (error) {
+      console.error('Failed to get profile:', error);
+      return null;
+    }
+  }
+
+  async deleteProfile(userId: string): Promise<void> {
+    try {
+      await this.profiles.delete(userId);
+    } catch (error) {
+      console.error('Failed to delete profile:', error);
+      throw error;
+    }
+  }
 }
 
 // Export singleton instance
 export const db = new BharatTaxMitraDB();
 
-// Helper functions for encryption (to be implemented with Web Crypto API)
-export async function encryptData(data: string): Promise<string> {
-  // TODO: Implement Web Crypto API encryption
-  // For now, return as-is (will be implemented in Module 1.3)
-  return data;
-}
+// Import encryption utilities
+import { encryptData, decryptData } from './crypto';
 
-export async function decryptData(encryptedData: string): Promise<string> {
-  // TODO: Implement Web Crypto API decryption
-  // For now, return as-is (will be implemented in Module 1.3)
-  return encryptedData;
-}
+// Re-export for convenience
+export { encryptData, decryptData };
+
