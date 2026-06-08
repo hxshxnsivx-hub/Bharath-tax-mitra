@@ -24,11 +24,16 @@ def generate_otp() -> str:
     return str(random.randint(100000, 999999))
 
 def check_rate_limit(mobile_number: str, table) -> bool:
-    """Check if user has exceeded rate limit (3 OTP in 15 min)"""
+    """
+    Check if user has exceeded rate limit (3 OTPs in 15 min).
+    Uses GSI 'mobile-timestamp-index' on the OTP table.
+    Raises RuntimeError if the GSI is not provisioned (infrastructure error).
+    Returns True if rate limit exceeded, False if within limit.
+    """
     try:
         current_time = int(time.time())
         window_start = current_time - RATE_LIMIT_WINDOW
-        
+
         response = table.query(
             IndexName='mobile-timestamp-index',
             KeyConditionExpression='mobileNumber = :mobile AND #ts > :window_start',
@@ -38,10 +43,19 @@ def check_rate_limit(mobile_number: str, table) -> bool:
                 ':window_start': window_start
             }
         )
-        
+
         return len(response.get('Items', [])) >= MAX_OTP_ATTEMPTS
-    except Exception as e:
-        print(f"Error checking rate limit: {e}")
+
+    except ClientError as e:
+        error_code = e.response['Error']['Code']
+        if error_code in ('ResourceNotFoundException', 'ValidationException'):
+            # GSI or table not provisioned — fail loudly, do not silently bypass
+            raise RuntimeError(
+                f"OTP rate-limit GSI 'mobile-timestamp-index' not found on table '{OTP_TABLE_NAME}'. "
+                "Ensure the CDK database stack has been deployed with the GSI."
+            ) from e
+        # Transient throttle errors — log and allow (conservative)
+        print(f"Transient error checking rate limit ({error_code}): {e}")
         return False
 
 def store_otp(mobile_number: str, otp: str, table) -> None:
@@ -61,10 +75,32 @@ def store_otp(mobile_number: str, otp: str, table) -> None:
     )
 
 def send_sms(mobile_number: str, otp: str) -> bool:
-    """Send OTP via Amazon SNS"""
+    """
+    Send OTP via Amazon SNS.
+    SMS_MODE=mock: logs OTP to CloudWatch instead of calling SNS (for dev/staging).
+    SMS_MODE=production: requires DLT_ENTITY_ID + DLT_TEMPLATE_ID env vars (TRAI mandate).
+    """
+    sms_mode = os.environ.get('SMS_MODE', 'mock')
+
+    if sms_mode == 'mock':
+        # Dev/staging: log OTP to CloudWatch, skip SNS
+        print(f"[MOCK SMS] OTP for {mobile_number[-4:].rjust(10, '*')}: {otp}")
+        return True
+
+    # Production: requires DLT registration credentials
+    dlt_entity_id = os.environ.get('DLT_ENTITY_ID')
+    dlt_template_id = os.environ.get('DLT_TEMPLATE_ID')
+
+    if not dlt_entity_id or not dlt_template_id:
+        print("ERROR: DLT_ENTITY_ID and DLT_TEMPLATE_ID required in SMS_MODE=production")
+        return False
+
     try:
-        message = f"Your Bharat Tax Mitra OTP is: {otp}. Valid for 5 minutes. Do not share with anyone."
-        
+        message = (
+            f"Your Bharat Tax Mitra OTP is: {otp}. "
+            "Valid for 5 minutes. Do not share with anyone."
+        )
+
         sns.publish(
             PhoneNumber=f"+91{mobile_number}",
             Message=message,
@@ -76,12 +112,24 @@ def send_sms(mobile_number: str, otp: str) -> bool:
                 'AWS.SNS.SMS.SMSType': {
                     'DataType': 'String',
                     'StringValue': 'Transactional'
+                },
+                'AWS.MM.SMS.OriginationNumber': {
+                    'DataType': 'String',
+                    'StringValue': 'BTAXMTR'
+                },
+                'AWS.SNS.SMS.EntityId': {
+                    'DataType': 'String',
+                    'StringValue': dlt_entity_id
+                },
+                'AWS.SNS.SMS.TemplateId': {
+                    'DataType': 'String',
+                    'StringValue': dlt_template_id
                 }
             }
         )
         return True
     except ClientError as e:
-        print(f"Error sending SMS: {e}")
+        print(f"Error sending SMS via SNS: {e}")
         return False
 
 def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
@@ -151,6 +199,14 @@ def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             })
         }
         
+    except RuntimeError as e:
+        # Infrastructure errors (missing table/GSI) — propagate as 503
+        print(f"Infrastructure error in send_otp: {e}")
+        return {
+            'statusCode': 503,
+            'headers': {'Content-Type': 'application/json'},
+            'body': json.dumps({'error': 'Service configuration error. Contact support.'})
+        }
     except Exception as e:
         print(f"Error in send_otp: {e}")
         return {
