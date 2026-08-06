@@ -5,7 +5,8 @@ import { formatIndianCurrency, parseIndianCurrency } from '../utils/currency';
 
 interface SalaryIncome {
   grossSalary: number;
-  hra: number;
+  basicSalary: number;
+  hraReceived: number;
   specialAllowance: number;
   otherAllowances: number;
   standardDeduction: number;
@@ -21,7 +22,8 @@ interface SalaryIncome {
 
 interface ValidationErrors {
   grossSalary?: string;
-  hra?: string;
+  basicSalary?: string;
+  hraReceived?: string;
   specialAllowance?: string;
   otherAllowances?: string;
   professionalTax?: string;
@@ -43,12 +45,77 @@ interface SalaryIncomeFormProps {
 const MAX_AMOUNT = 1000000000; // 10 crores
 const STANDARD_DEDUCTION = 50000; // Auto-filled ₹50k
 
+// Tooltip component for contextual help (module-scoped so it isn't recreated each render)
+function Tooltip({ text }: { text: string }) {
+  return (
+    <div className="group relative inline-block ml-2">
+      <span className="cursor-help text-blue-600 hover:text-blue-800">
+        <svg role="img" aria-label="help" className="w-4 h-4 inline" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+        </svg>
+      </span>
+      <div className="invisible group-hover:visible absolute z-10 w-64 p-2 mt-1 text-sm text-white bg-gray-900 rounded-lg shadow-lg -left-24">
+        {text}
+      </div>
+    </div>
+  );
+}
+
+// Currency input component (module-scoped so the input is not remounted on every keystroke)
+function CurrencyInput({
+  id,
+  label,
+  value,
+  onChange,
+  onBlur,
+  error,
+  tooltip,
+  required = false,
+}: {
+  id: string;
+  label: string;
+  value: number;
+  onChange: (value: string) => void;
+  onBlur: () => void;
+  error?: string;
+  tooltip?: string;
+  required?: boolean;
+}) {
+  return (
+    <div>
+      <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-2">
+        {label} {required && <span className="text-red-500">*</span>}
+        {tooltip && <Tooltip text={tooltip} />}
+      </label>
+      <div className="relative">
+        <span className="absolute left-3 top-2 text-gray-500">₹</span>
+        <input
+          id={id}
+          type="text"
+          value={value > 0 ? formatIndianCurrency(value).replace('₹', '').trim() : ''}
+          onChange={(e) => onChange(e.target.value)}
+          onBlur={onBlur}
+          placeholder="0"
+          className={`
+            w-full pl-8 pr-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+            ${error ? 'border-red-500' : 'border-gray-300'}
+          `}
+        />
+      </div>
+      {error && (
+        <p className="mt-1 text-sm text-red-600">{error}</p>
+      )}
+    </div>
+  );
+}
+
 export function SalaryIncomeForm({ sessionId, initialData, onSave }: SalaryIncomeFormProps) {
   const { t } = useTranslation();
 
   const [formData, setFormData] = useState<SalaryIncome>({
     grossSalary: initialData?.grossSalary || 0,
-    hra: initialData?.hra || 0,
+    basicSalary: initialData?.basicSalary || 0,
+    hraReceived: initialData?.hraReceived || 0,
     specialAllowance: initialData?.specialAllowance || 0,
     otherAllowances: initialData?.otherAllowances || 0,
     standardDeduction: STANDARD_DEDUCTION,
@@ -99,7 +166,7 @@ export function SalaryIncomeForm({ sessionId, initialData, onSave }: SalaryIncom
 
   // Calculate net taxable salary in real-time
   const calculateNetTaxableSalary = (): number => {
-    const totalIncome = formData.grossSalary + formData.hra + formData.specialAllowance + formData.otherAllowances;
+    const totalIncome = formData.grossSalary + formData.hraReceived + formData.specialAllowance + formData.otherAllowances;
     const totalDeductions = formData.standardDeduction + formData.professionalTax + formData.otherDeductions;
     return Math.max(0, totalIncome - totalDeductions);
   };
@@ -115,7 +182,7 @@ export function SalaryIncomeForm({ sessionId, initialData, onSave }: SalaryIncom
       setIsSaving(true);
       const draft: Omit<SavedDraft, 'draftId'> = {
         sessionId,
-        formData: formData as unknown as Record<string, any>,
+        formData: formData as unknown as Record<string, unknown>,
         savedAt: Date.now(),
         autoSave: true,
       };
@@ -192,7 +259,8 @@ export function SalaryIncomeForm({ sessionId, initialData, onSave }: SalaryIncom
     // Validate all fields
     const newErrors: ValidationErrors = {
       grossSalary: validateAmount(formData.grossSalary),
-      hra: validateAmount(formData.hra),
+      basicSalary: validateAmount(formData.basicSalary),
+      hraReceived: validateAmount(formData.hraReceived),
       specialAllowance: validateAmount(formData.specialAllowance),
       otherAllowances: validateAmount(formData.otherAllowances),
       professionalTax: validateAmount(formData.professionalTax),
@@ -220,66 +288,6 @@ export function SalaryIncomeForm({ sessionId, initialData, onSave }: SalaryIncom
       onSave?.(formData);
     }
   };
-
-  // Tooltip component for contextual help
-  const Tooltip = ({ text }: { text: string }) => (
-    <div className="group relative inline-block ml-2">
-      <span className="cursor-help text-blue-600 hover:text-blue-800">
-        <svg className="w-4 h-4 inline" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-        </svg>
-      </span>
-      <div className="invisible group-hover:visible absolute z-10 w-64 p-2 mt-1 text-sm text-white bg-gray-900 rounded-lg shadow-lg -left-24">
-        {text}
-      </div>
-    </div>
-  );
-
-  // Currency input component
-  const CurrencyInput = ({ 
-    id, 
-    label, 
-    value, 
-    onChange, 
-    onBlur, 
-    error, 
-    tooltip,
-    required = false 
-  }: { 
-    id: string; 
-    label: string; 
-    value: number; 
-    onChange: (value: string) => void; 
-    onBlur: () => void; 
-    error?: string;
-    tooltip?: string;
-    required?: boolean;
-  }) => (
-    <div>
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-2">
-        {label} {required && <span className="text-red-500">*</span>}
-        {tooltip && <Tooltip text={tooltip} />}
-      </label>
-      <div className="relative">
-        <span className="absolute left-3 top-2 text-gray-500">₹</span>
-        <input
-          id={id}
-          type="text"
-          value={value > 0 ? formatIndianCurrency(value).replace('₹', '').trim() : ''}
-          onChange={(e) => onChange(e.target.value)}
-          onBlur={onBlur}
-          placeholder="0"
-          className={`
-            w-full pl-8 pr-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-            ${error ? 'border-red-500' : 'border-gray-300'}
-          `}
-        />
-      </div>
-      {error && (
-        <p className="mt-1 text-sm text-red-600">{error}</p>
-      )}
-    </div>
-  );
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl mx-auto p-6 bg-white rounded-lg shadow">
@@ -362,12 +370,23 @@ export function SalaryIncomeForm({ sessionId, initialData, onSave }: SalaryIncom
           />
 
           <CurrencyInput
-            id="hra"
+            id="basicSalary"
+            label={t('salaryIncome.basicSalary')}
+            value={formData.basicSalary}
+            onChange={(val) => handleAmountChange('basicSalary', val)}
+            onBlur={() => handleBlur('basicSalary')}
+            error={errors.basicSalary}
+            tooltip={t('salaryIncome.basicSalaryTooltip')}
+            required
+          />
+
+          <CurrencyInput
+            id="hraReceived"
             label={t('salaryIncome.hra')}
-            value={formData.hra}
-            onChange={(val) => handleAmountChange('hra', val)}
-            onBlur={() => handleBlur('hra')}
-            error={errors.hra}
+            value={formData.hraReceived}
+            onChange={(val) => handleAmountChange('hraReceived', val)}
+            onBlur={() => handleBlur('hraReceived')}
+            error={errors.hraReceived}
             tooltip={t('salaryIncome.hraTooltip')}
           />
 
@@ -499,7 +518,7 @@ export function SalaryIncomeForm({ sessionId, initialData, onSave }: SalaryIncom
             <p className="text-gray-600">{t('salaryIncome.totalIncome')}</p>
             <p className="text-xl font-bold text-gray-900">
               {formatIndianCurrency(
-                formData.grossSalary + formData.hra + formData.specialAllowance + formData.otherAllowances
+                formData.grossSalary + formData.hraReceived + formData.specialAllowance + formData.otherAllowances
               )}
             </p>
           </div>

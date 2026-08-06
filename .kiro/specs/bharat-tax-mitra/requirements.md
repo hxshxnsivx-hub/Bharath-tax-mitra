@@ -96,7 +96,7 @@ Bharat Tax Mitra is an offline-first, AI-powered income tax filing assistant des
 1. THE Tax_Engine SHALL compute tax liability using FY 2025-26 Income Tax Act rules
 2. THE Tax_Engine SHALL calculate deductions for Section 80C (up to ₹1.5 lakh), 80D (health insurance), and HRA
 3. THE Tax_Engine SHALL apply Section 44AD presumptive taxation for business income
-4. THE Tax_Engine SHALL apply Section 87A rebate (up to ₹12,500 for income below ₹5 lakh in New Regime)
+4. THE Tax_Engine SHALL apply Section 87A rebate (up to ₹25,000 for income up to ₹7 lakh in New Regime for FY 2025-26 per Finance Bill 2025; up to ₹12,500 for income up to ₹5 lakh in Old Regime)
 5. THE Tax_Engine SHALL compute tax liability for both Old Regime and New Regime
 6. WHEN User data changes, THE Tax_Engine SHALL recalculate tax within 1 second
 7. THE Tax_Engine SHALL validate that total deductions do not exceed gross total income
@@ -210,7 +210,7 @@ Bharat Tax Mitra is an offline-first, AI-powered income tax filing assistant des
 2. WHEN claimed deductions exceed statutory limits, THE System SHALL prevent progression and display error
 3. WHEN income sources in AIS do not match Form_16, THE System SHALL flag the discrepancy
 4. WHEN HRA claimed exceeds 50% of basic salary, THE System SHALL display a warning
-5. WHEN business income under 44AD is below ₹50 lakh but presumptive rate is not applied, THE System SHALL warn User
+5. WHEN business income under 44AD is below ₹2 crore (or ₹3 crore where cash receipts do not exceed 5% of total) but presumptive rate is not applied, THE System SHALL warn User
 6. THE System SHALL detect duplicate income entries and prompt User to review
 7. WHEN bank interest income is missing but AIS shows interest, THE System SHALL prompt User to add it
 8. THE System SHALL compare current year income with previous year (if available) and flag variations above 50%

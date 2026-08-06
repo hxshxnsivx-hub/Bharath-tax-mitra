@@ -1,0 +1,29 @@
+{
+  "environment": "staging",
+  "region": "ap-south-1",
+  "account": "REPLACE_WITH_AWS_ACCOUNT_ID",
+  "stackName": "BharatTaxMitra-Staging",
+  "domainName": "staging.bharattaxmitra.in",
+  "certificateArn": "",
+  "enableWaf": true,
+  "enableXray": true,
+  "logRetentionDays": 14,
+  "lambdaMemory": {
+    "auth": 512,
+    "taxCalculation": 1024,
+    "extraction": 2048
+  },
+  "lambdaTimeout": {
+    "auth": 10,
+    "taxCalculation": 30,
+    "extraction": 60
+  },
+  "dynamoDb": {
+    "billingMode": "PAY_PER_REQUEST",
+    "pointInTimeRecovery": true
+  },
+  "s3": {
+    "lifecycleDays": 1,
+    "versioningEnabled": true
+  }
+}

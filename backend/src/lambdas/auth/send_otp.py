@@ -146,8 +146,8 @@ def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         body = json.loads(event.get('body', '{}'))
         mobile_number = body.get('mobileNumber', '').strip()
         
-        # Validate mobile number
-        if not mobile_number or len(mobile_number) != 10:
+        # Validate mobile number — must be exactly 10 digits
+        if not mobile_number or len(mobile_number) != 10 or not mobile_number.isdigit():
             return {
                 'statusCode': 400,
                 'headers': {'Content-Type': 'application/json'},

@@ -79,6 +79,9 @@ export interface TaxRegime {
 
 export interface OldRegime extends TaxRegime {
   deductions: OldRegimeDeductions;
+  rebate87A: Rebate87A;
+  seniorCitizenSlabs: TaxSlab[];
+  superSeniorCitizenSlabs: TaxSlab[];
 }
 
 export interface NewRegime extends TaxRegime {
@@ -89,12 +92,14 @@ export interface NewRegime extends TaxRegime {
 export interface PresumptiveTaxation {
   section44AD: {
     threshold: number;
+    thresholdDigitalOnly: number; // ₹3Cr when cash receipts <= 5% of total (Finance Act 2023)
     digitalRate: number;
     cashRate: number;
     description: string;
   };
   section44ADA: {
     threshold: number;
+    thresholdDigitalOnly: number; // ₹75L when cash receipts <= 5% of total
     rate: number;
     description: string;
   };

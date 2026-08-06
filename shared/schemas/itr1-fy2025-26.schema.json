@@ -1,0 +1,226 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://bharattaxmitra.in/schemas/itr1-fy2025-26.schema.json",
+  "title": "ITR-1 (Sahaj) — FY 2025-26 / AY 2025-26",
+  "$comment": "PROVENANCE: structure mirrors the IT Portal ITR-1 JSON layout as captured in design.md (ITR1Export). This is a FAITHFUL SUBSET covering the fields Bharat Tax Mitra generates for a salary + other-sources filer. It is NOT the verbatim government schema — before production, replace with the official ITR-1 schema from the IT Department offline utility (https://www.incometax.gov.in/iec/foportal/downloads/offline-utilities) and reconcile field names. See shared/schemas/README.md. Version 1.0.0, sourced 2026-07-12.",
+  "type": "object",
+  "required": ["ITR"],
+  "additionalProperties": false,
+  "properties": {
+    "ITR": {
+      "type": "object",
+      "required": ["ITR1"],
+      "additionalProperties": false,
+      "properties": {
+        "ITR1": {
+          "type": "object",
+          "required": ["CreationInfo", "Form_ITR1"],
+          "additionalProperties": false,
+          "properties": {
+            "CreationInfo": {
+              "type": "object",
+              "required": ["SWVersionNo", "SWCreatedBy", "JSONCreatedBy", "JSONCreationDate"],
+              "additionalProperties": false,
+              "properties": {
+                "SWVersionNo": { "type": "string", "minLength": 1 },
+                "SWCreatedBy": { "type": "string", "minLength": 1 },
+                "JSONCreatedBy": { "type": "string", "minLength": 1 },
+                "JSONCreationDate": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" }
+              }
+            },
+            "Form_ITR1": {
+              "type": "object",
+              "required": ["PersonalInfo", "FilingStatus", "ITR1_IncomeDeductions", "TaxComputation", "TaxPaid"],
+              "additionalProperties": false,
+              "properties": {
+                "PersonalInfo": {
+                  "type": "object",
+                  "required": ["AssesseeType", "PAN", "DOB", "Name", "Address"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "AssesseeType": { "type": "string", "enum": ["Individual"] },
+                    "PAN": { "type": "string", "pattern": "^[A-Z]{5}[0-9]{4}[A-Z]$" },
+                    "AadhaarCardNo": { "type": "string", "pattern": "^[0-9]{12}$" },
+                    "DOB": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+                    "EmployerCategory": { "type": "string", "enum": ["PSU", "GOVT", "PRIVATE", "OTHER"] },
+                    "Name": {
+                      "type": "object",
+                      "required": ["FirstName", "SurName"],
+                      "additionalProperties": false,
+                      "properties": {
+                        "FirstName": { "type": "string", "minLength": 1 },
+                        "MiddleName": { "type": "string" },
+                        "SurName": { "type": "string", "minLength": 1 }
+                      }
+                    },
+                    "Address": {
+                      "type": "object",
+                      "required": ["CityOrTownOrDistrict", "StateCode", "PinCode", "CountryCode"],
+                      "additionalProperties": false,
+                      "properties": {
+                        "ResidenceNo": { "type": "string" },
+                        "RoadOrStreet": { "type": "string" },
+                        "LocalityOrArea": { "type": "string" },
+                        "CityOrTownOrDistrict": { "type": "string", "minLength": 1 },
+                        "StateCode": { "type": "string", "minLength": 1 },
+                        "PinCode": { "type": "string", "pattern": "^[0-9]{6}$" },
+                        "CountryCode": { "type": "string", "enum": ["91"] }
+                      }
+                    }
+                  }
+                },
+                "FilingStatus": {
+                  "type": "object",
+                  "required": ["ReturnFiledUnderSec", "SeventhProviso139", "OriginalOrRevised"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "ReturnFiledUnderSec": { "type": "string" },
+                    "SeventhProviso139": { "type": "string", "enum": ["Y", "N"] },
+                    "FilingDate": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+                    "OriginalOrRevised": { "type": "string", "enum": ["O", "R"] }
+                  }
+                },
+                "ITR1_IncomeDeductions": {
+                  "type": "object",
+                  "required": ["Salary", "TotalIncomeAfterDeductions"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "Salary": {
+                      "type": "object",
+                      "required": ["SalaryDtls"],
+                      "additionalProperties": false,
+                      "properties": {
+                        "SalaryDtls": {
+                          "type": "array",
+                          "minItems": 1,
+                          "items": {
+                            "type": "object",
+                            "required": ["EmployerName", "GrossSalary", "TotalSalary", "StandardDeduction", "NetSalary"],
+                            "additionalProperties": false,
+                            "properties": {
+                              "EmployerName": { "type": "string" },
+                              "TAN": { "type": "string" },
+                              "GrossSalary": { "type": "integer", "minimum": 0 },
+                              "Allowances": { "type": "integer", "minimum": 0 },
+                              "PerquisitesValue": { "type": "integer", "minimum": 0 },
+                              "ProfitsInLieuOfSalary": { "type": "integer", "minimum": 0 },
+                              "TotalSalary": { "type": "integer", "minimum": 0 },
+                              "StandardDeduction": { "type": "integer", "minimum": 0 },
+                              "EntertainmentAllowance": { "type": "integer", "minimum": 0 },
+                              "TaxOnEmployment": { "type": "integer", "minimum": 0 },
+                              "NetSalary": { "type": "integer", "minimum": 0 }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "IncomeFromOS": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "IncOthThanOwnRaceHorse": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "OthersInc": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "properties": {
+                                "OthersIncDtls": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "required": ["SourceDescription", "IncAmt"],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "SourceDescription": { "type": "string" },
+                                      "IncAmt": { "type": "integer", "minimum": 0 }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "TotalIncomeAfterDeductions": { "type": "integer", "minimum": 0 }
+                  }
+                },
+                "TaxComputation": {
+                  "type": "object",
+                  "required": ["TotalTaxPayable", "Rebate87A", "TaxPayableOnTI", "Surcharge", "EducationCess", "GrossTaxLiability", "NetTaxLiability"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "TotalTaxPayable": { "type": "integer", "minimum": 0 },
+                    "Rebate87A": { "type": "integer", "minimum": 0 },
+                    "TaxPayableOnTI": { "type": "integer", "minimum": 0 },
+                    "Surcharge": { "type": "integer", "minimum": 0 },
+                    "EducationCess": { "type": "integer", "minimum": 0 },
+                    "GrossTaxLiability": { "type": "integer", "minimum": 0 },
+                    "Section89": { "type": "integer", "minimum": 0 },
+                    "NetTaxLiability": { "type": "integer", "minimum": 0 }
+                  }
+                },
+                "TaxPaid": {
+                  "type": "object",
+                  "required": ["AdvanceTax", "SelfAssessmentTax", "TotalTaxesPaid"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "TDS": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "TDSonSalary": {
+                          "type": "object",
+                          "required": ["TDSonSalaryDtls"],
+                          "additionalProperties": false,
+                          "properties": {
+                            "TDSonSalaryDtls": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "required": ["TaxDeducted"],
+                                "additionalProperties": false,
+                                "properties": {
+                                  "TAN": { "type": "string" },
+                                  "EmployerName": { "type": "string" },
+                                  "TaxDeducted": { "type": "integer", "minimum": 0 }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "AdvanceTax": { "type": "integer", "minimum": 0 },
+                    "SelfAssessmentTax": { "type": "integer", "minimum": 0 },
+                    "TotalTaxesPaid": { "type": "integer", "minimum": 0 }
+                  }
+                },
+                "Refund": {
+                  "type": "object",
+                  "required": ["RefundDue"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "RefundDue": { "type": "integer", "minimum": 0 },
+                    "BankAccountDtls": {
+                      "type": "object",
+                      "required": ["IFSCCode", "BankAccountNo"],
+                      "additionalProperties": false,
+                      "properties": {
+                        "IFSCCode": { "type": "string", "pattern": "^[A-Z]{4}0[A-Z0-9]{6}$" },
+                        "BankName": { "type": "string" },
+                        "BankAccountNo": { "type": "string", "minLength": 5 }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

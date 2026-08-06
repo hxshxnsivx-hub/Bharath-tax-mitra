@@ -3,12 +3,117 @@
 @tailwind utilities;
 
 @layer base {
-  * {
-    @apply border-border;
+  /*
+   * Design-system tokens (OPT-UI.1, shadcn/ui convention).
+   * HSL triplets consumed as hsl(var(--token)) in tailwind.config.js.
+   * Values are tuned to the app's existing visual identity:
+   *   primary = brand blue-600 · accent = amber highlight · bg = gray-50
+   */
+  :root {
+    /* Premium retone: a WARM paper ground instead of neutral gray — the
+       "chosen neutral" (hue-biased toward the gold accent), private-bank
+       ivory rather than default gray-50. */
+    --background: 42 30% 97%;         /* warm ivory paper */
+    --foreground: 222 47% 9%;         /* rich ink */
+
+    --card: 40 25% 99%;               /* warm near-white */
+    --card-foreground: 222 47% 9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 221 39% 11%;
+
+    --primary: 221 83% 53%;           /* blue-600 #2563eb */
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 220 14% 96%;         /* gray-100 */
+    --secondary-foreground: 221 39% 11%;
+
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;   /* gray-500 */
+
+    --accent: 43 96% 56%;             /* amber-400 #fbbf24 — brand highlight */
+    --accent-foreground: 224 64% 33%; /* blue-900 on amber */
+
+    --destructive: 0 84% 60%;         /* red-500 */
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 13% 91%;            /* gray-200 */
+    --input: 220 13% 91%;
+    --ring: 221 83% 53%;              /* focus ring = primary */
+
+    --radius: 0.75rem;                /* matches the app's prevailing rounded-xl */
+
+    /* Ambient story layer (AmbientBackground): --ambient-1 is the wayfinding
+       hue — MainApp retunes it per tab; --ambient-2 is the constant brand
+       gold. HSL triplets, consumed as hsl(var(--x) / alpha). */
+    --ambient-1: 221 83% 53%;         /* blue-600 (home default) */
+    --ambient-2: 41 55% 55%;          /* champagne gold (brand constant) */
+
+    /* Premium accents (private-wealth treatment) */
+    --gold: 41 55% 55%;               /* champagne gold #c9a961 */
+    --gold-deep: 40 48% 42%;          /* engraved gold */
+    --ink: 224 55% 10%;               /* deep navy ink #0b1128 */
+    --ink-2: 226 45% 16%;             /* raised ink */
   }
+
+  /* Dark theme structure — activated by adding .dark to <html>. Not shipped
+     in the UI yet; kept so components built today theme correctly later. */
+  .dark {
+    --background: 224 71% 4%;
+    --foreground: 210 20% 98%;
+
+    --card: 224 71% 6%;
+    --card-foreground: 210 20% 98%;
+
+    --popover: 224 71% 6%;
+    --popover-foreground: 210 20% 98%;
+
+    --primary: 217 91% 60%;           /* blue-500 pops on dark */
+    --primary-foreground: 222 47% 11%;
+
+    --secondary: 215 28% 17%;
+    --secondary-foreground: 210 20% 98%;
+
+    --muted: 215 28% 17%;
+    --muted-foreground: 218 11% 65%;
+
+    --accent: 43 96% 56%;
+    --accent-foreground: 224 64% 33%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 20% 98%;
+
+    --border: 215 28% 17%;
+    --input: 215 28% 17%;
+    --ring: 217 91% 60%;
+  }
+
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Keyboard focus baseline (task 4.12.3 / WCAG 2.4.7). Radix/ui components
+     ship their own rings; this guarantees every other interactive element —
+     hand-rolled buttons, links, inputs — has a visible, high-contrast focus
+     state. :focus-visible so pointer users never see a stray ring. */
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid hsl(var(--gold));
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* WCAG 2.3.3 / OPT-UI global constraint: honour reduced-motion for every
+     animation/transition the design system introduces. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
@@ -16,4 +121,225 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  /* ── Visual-depth utilities (OPT-UI.2 3D/animated pass) ────────────────
+     All effects are transform/opacity/blur-composited and are neutralised by
+     the global prefers-reduced-motion kill-switch above. */
+
+  /* Animated brand mesh — layered radial gradients slowly drifting. */
+  .bg-mesh {
+    background:
+      radial-gradient(38rem 24rem at 12% 18%, rgba(37, 99, 235, 0.55), transparent 60%),
+      radial-gradient(30rem 22rem at 88% 12%, rgba(99, 102, 241, 0.5), transparent 62%),
+      radial-gradient(34rem 26rem at 78% 88%, rgba(251, 191, 36, 0.22), transparent 60%),
+      radial-gradient(26rem 20rem at 8% 92%, rgba(30, 58, 138, 0.65), transparent 65%),
+      linear-gradient(135deg, #1e3a8a 0%, #312e81 55%, #1e40af 100%);
+    background-size: 160% 160%;
+    animation: mesh-drift 16s ease-in-out infinite alternate;
+  }
+  @keyframes mesh-drift {
+    0%   { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
+  }
+
+  /* Frosted glass surface — for cards floating over the mesh. */
+  .glass {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+  .glass-light {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+  }
+
+  /* Layered elevation — reads as physical depth without heavy filters. */
+  .shadow-elevated {
+    box-shadow:
+      0 1px 2px rgba(16, 24, 40, 0.06),
+      0 6px 16px -4px rgba(16, 24, 40, 0.12),
+      0 20px 44px -16px rgba(30, 58, 138, 0.28);
+  }
+  .shadow-float {
+    box-shadow:
+      0 2px 4px rgba(16, 24, 40, 0.08),
+      0 12px 28px -8px rgba(30, 58, 138, 0.35);
+  }
+
+  /* Very slow drift for the full-page ambient orbs (transform-only). */
+  .animate-ambient {
+    animation: ambient-drift 26s ease-in-out infinite alternate;
+  }
+  .animate-ambient-delayed {
+    animation: ambient-drift 34s ease-in-out 4s infinite alternate-reverse;
+  }
+  @keyframes ambient-drift {
+    0%   { transform: translate3d(0, 0, 0) scale(1); }
+    100% { transform: translate3d(3rem, -2rem, 0) scale(1.08); }
+  }
+
+  /* Slow vertical float for decorative orbs (transform-only). */
+  .animate-float {
+    animation: float-y 7s ease-in-out infinite;
+  }
+  .animate-float-delayed {
+    animation: float-y 9s ease-in-out 1.2s infinite;
+  }
+  @keyframes float-y {
+    0%, 100% { transform: translateY(0) translateZ(0); }
+    50%      { transform: translateY(-14px) translateZ(0); }
+  }
+
+  /* Soft radial glow behind hero numerals. */
+  .glow-amber {
+    text-shadow: 0 0 24px rgba(251, 191, 36, 0.45);
+  }
+
+  /* ── Premium (private-wealth) utilities ────────────────────────────── */
+
+  /* Banknote-style film grain — inline SVG turbulence, ~600B, offline-safe.
+     Layered at very low opacity over the whole page by AmbientBackground. */
+  .texture-grain {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 240px 240px;
+  }
+
+  /* Hairline rules — crisp 1px warm strokes, the premium alternative to
+     soft gray borders. */
+  .hairline {
+    border: 1px solid hsl(40 20% 55% / 0.28);
+  }
+  .hairline-b {
+    border-bottom: 1px solid hsl(40 20% 55% / 0.28);
+  }
+  .hairline-gold {
+    border: 1px solid hsl(var(--gold) / 0.45);
+  }
+
+  /* Deep ink surface (headers, hero) with a faint gold sheen sweep. */
+  .bg-ink {
+    background:
+      radial-gradient(60rem 20rem at 85% -20%, hsl(var(--gold) / 0.12), transparent 55%),
+      linear-gradient(135deg, hsl(var(--ink)) 0%, hsl(var(--ink-2)) 100%);
+  }
+
+  /* Champagne-gold CTA — engraved edge, crisp shadow. */
+  .btn-gold {
+    background: linear-gradient(180deg, #e6cd8a 0%, #c9a961 58%, #b8944d 100%);
+    color: hsl(224 55% 12%);
+    border: 1px solid hsl(var(--gold-deep) / 0.65);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.45),
+      0 2px 6px rgba(30, 25, 5, 0.25),
+      0 10px 24px -10px hsl(var(--gold-deep) / 0.55);
+  }
+  .btn-gold:hover {
+    background: linear-gradient(180deg, #efd99c 0%, #d4b56d 58%, #c09c53 100%);
+  }
+
+  /* Serif numerals for money figures — tabular where digits align. */
+  .figure-display {
+    font-family: 'Playfair Display Variable', Georgia, serif;
+    font-variant-numeric: lining-nums tabular-nums;
+    letter-spacing: 0.01em;
+  }
+
+  /* Uppercase eyebrow labels. */
+  .eyebrow {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+}
+
+/* ── Printable tax summary (TaxSummaryDocument · tasks 3.4.2/3.4.3, OPT-P3.2) ──
+   On screen the document lives inside an off-screen container; the print
+   stylesheet isolates it so "Save as PDF" outputs only the A4 summary. The
+   browser renders all Indic scripts natively — no font embedding, no tofu. */
+
+/* Off-screen on screen; shown only when the body carries .printing. */
+.tsd {
+  position: absolute;
+  left: -10000px;
+  top: 0;
+  width: 210mm;
+  padding: 16mm 18mm;
+  background: #fff;
+  color: #14203d;
+  font-family: 'Playfair Display Variable', Georgia, serif;
+}
+.tsd .tsd-num { font-variant-numeric: tabular-nums; }
+
+.tsd-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid #c9a961;
+  padding-bottom: 10px;
+}
+.tsd-brand { font-size: 22px; font-weight: 700; letter-spacing: .01em; }
+.tsd-eyebrow { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #a9711a; margin-top: 2px; }
+.tsd-head-meta { text-align: right; font-size: 11px; color: #52514e; line-height: 1.6; font-family: system-ui, sans-serif; }
+
+.tsd-watermark {
+  color: #c9a961;
+  opacity: .5;
+  font-size: 12px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  margin-top: 8px;
+}
+
+.tsd-section { margin-top: 16px; }
+.tsd-h2 {
+  font-size: 13px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #a9711a;
+  border-bottom: 1px solid #e6dcc3;
+  padding-bottom: 4px;
+  margin-bottom: 6px;
+}
+.tsd-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 32px; }
+.tsd-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 3px 0;
+  font-size: 13px;
+  font-family: system-ui, sans-serif;
+}
+.tsd-row-strong {
+  font-weight: 700;
+  border-top: 1px solid #d9d3c4;
+  margin-top: 3px;
+  padding-top: 5px;
+  font-family: 'Playfair Display Variable', Georgia, serif;
+}
+.tsd-note { font-size: 12px; color: #52514e; margin-top: 6px; font-family: system-ui, sans-serif; }
+.tsd-foot {
+  margin-top: 22px;
+  border-top: 1px solid #e6dcc3;
+  padding-top: 8px;
+  font-size: 10px;
+  color: #6b675e;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+}
+
+@media print {
+  /* Hide everything, then reveal only the summary document. */
+  body.printing > #root { display: none !important; }
+  body.printing .tsd {
+    position: static;
+    left: 0;
+    width: auto;
+    padding: 0;
+  }
+  @page { size: A4; margin: 12mm; }
+  .tsd-row, .tsd-note, .tsd-foot, .tsd-head-meta { color: #14203d; }
 }

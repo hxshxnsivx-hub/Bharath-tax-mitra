@@ -1,0 +1,38 @@
+{
+  "name": "bharat-tax-mitra",
+  "version": "1.0.0",
+  "description": "Offline-first, AI-powered income tax filing assistant for Indian taxpayers",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend",
+    "shared"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=frontend",
+    "dev:local": "node scripts/dev-local.mjs",
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "lint": "npm run lint --workspaces",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "prepare": "husky install",
+    "infra:deploy:dev": "npm run deploy:dev --workspace=infrastructure",
+    "infra:deploy:prod": "npm run deploy:prod --workspace=infrastructure",
+    "infra:diff:dev": "npm run diff:dev --workspace=infrastructure",
+    "infra:synth:dev": "npm run synth:dev --workspace=infrastructure",
+    "infra:bootstrap:dev": "npm run bootstrap:dev --workspace=infrastructure",
+    "backend:test": "cd backend && python -m pytest tests/ -v",
+    "backend:mock": "cd backend/src/local && uvicorn mock_server:app --reload --port 3001"
+  },
+  "devDependencies": {
+    "husky": "^8.0.3",
+    "prettier": "^3.1.0",
+    "lint-staged": "^15.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "author": "Bharat Tax Mitra Team",
+  "license": "MIT"
+}

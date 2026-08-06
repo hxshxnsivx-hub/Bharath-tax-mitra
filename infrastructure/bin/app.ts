@@ -2,7 +2,7 @@
 /**
  * CDK Application Entry Point
  * 
- * Stack deployment order: database → auth → appconfig → frontend
+ * Stack deployment order: database → appconfig → auth → frontend
  * (each stack imports outputs from the previous via CfnOutput / Fn.importValue)
  */
 import 'source-map-support/register';
@@ -33,23 +33,26 @@ const dbStack = new DatabaseStack(app, `${prefix}-Database`, {
   description: 'Bharat Tax Mitra — DynamoDB tables + TTL audit cron',
 });
 
-// Wave 2: Auth (Lambda + API Gateway + IAM + SSM)
-const authStack = new AuthStack(app, `${prefix}-Auth`, {
-  env: awsEnv,
-  envName: env,
-  config,
-  databaseStack: dbStack,
-  description: 'Bharat Tax Mitra — OTP Lambda functions + API Gateway',
-});
-authStack.addDependency(dbStack);
-
-// Wave 3: AppConfig (tax rules hot-reload)
+// Wave 2: AppConfig (tax rules hot-reload) — before Auth, which consumes its
+// application/environment/profile IDs for the GET /tax-rules route (OPT-A1)
 const appConfigStack = new AppConfigStack(app, `${prefix}-AppConfig`, {
   env: awsEnv,
   envName: env,
   config,
   description: 'Bharat Tax Mitra — AppConfig for tax rules hot-reload',
 });
+
+// Wave 3: Auth (Lambda + API Gateway + IAM + SSM + tax-rules route)
+const authStack = new AuthStack(app, `${prefix}-Auth`, {
+  env: awsEnv,
+  envName: env,
+  config,
+  databaseStack: dbStack,
+  appConfigStack,
+  description: 'Bharat Tax Mitra — OTP Lambda functions + API Gateway',
+});
+authStack.addDependency(dbStack);
+authStack.addDependency(appConfigStack);
 
 // Wave 4: Frontend (S3 + CloudFront)
 const frontendStack = new FrontendStack(app, `${prefix}-Frontend`, {

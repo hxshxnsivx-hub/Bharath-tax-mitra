@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run lint-staged
+npx lint-staged
+
+# Run type checking
+npm run lint --workspace=frontend
+
+# Run tests for changed files
+npm run test --workspace=frontend -- --run --changed

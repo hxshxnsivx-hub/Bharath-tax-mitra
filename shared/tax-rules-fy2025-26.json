@@ -1,77 +1,104 @@
 {
-  "version": "1.0.0",
+  "_source": "Finance Bill 2025, Bill No. 14 of 2025, as introduced in Lok Sabha on 1st February 2025",
+  "_auditNote": "Slabs extracted verbatim from First Schedule (Paragraph A, Part III) and Section 115BAC of Finance Bill 2025. New regime table (clause 24, pages 152-153 of Bill) and Section 87A amendment (clause 20, page 149) take effect from 1st April 2026 (AY 2026-27). This file covers FY 2025-26 (AY 2025-26) rates only.",
+  "_effectiveYearWarning": "The 7-slab new regime (0/5/10/15/20/25/30% on 4L/8L/12L/16L/20L/24L boundaries) and 87A rebate of Rs 60,000 up to Rs 12L income are AY 2026-27 changes. FY 2025-26 uses the prior 6-slab new regime with 87A rebate of Rs 25,000 up to Rs 7L.",
+  "version": "2.0.0",
   "financialYear": "FY2025-26",
-  "assessmentYear": "AY2026-27",
+  "assessmentYear": "AY2025-26",
   "effectiveFrom": "2025-04-01",
   "effectiveTo": "2026-03-31",
+
   "oldRegime": {
     "name": "Old Tax Regime",
+    "_source": "Finance Bill 2025, First Schedule, Part III, Paragraph A, Item (I) — applicable for AY 2025-26",
     "slabs": [
       {
         "min": 0,
         "max": 250000,
         "rate": 0,
-        "description": "Income up to ₹2.5 lakh"
+        "description": "Income up to Rs. 2,50,000 — Nil (Finance Bill 2025, Paragraph A(I)(1))"
       },
       {
-        "min": 250001,
+        "min": 250000,
         "max": 500000,
         "rate": 5,
-        "description": "Income from ₹2.5 lakh to ₹5 lakh"
+        "description": "Rs. 2,50,000 to Rs. 5,00,000 — 5% (Finance Bill 2025, Paragraph A(I)(2))"
       },
       {
-        "min": 500001,
+        "min": 500000,
         "max": 1000000,
         "rate": 20,
-        "description": "Income from ₹5 lakh to ₹10 lakh"
+        "description": "Rs. 5,00,000 to Rs. 10,00,000 — 20% (Finance Bill 2025, Paragraph A(I)(3))"
       },
       {
-        "min": 1000001,
+        "min": 1000000,
         "max": null,
         "rate": 30,
-        "description": "Income above ₹10 lakh"
+        "description": "Above Rs. 10,00,000 — 30% (Finance Bill 2025, Paragraph A(I)(4))"
       }
     ],
+    "seniorCitizenSlabs": [
+      { "min": 0, "max": 300000, "rate": 0, "description": "Up to Rs. 3,00,000 — Nil (Resident 60-79, Finance Bill 2025, Paragraph A(II))" },
+      { "min": 300000, "max": 500000, "rate": 5, "description": "Rs. 3,00,000 to Rs. 5,00,000 — 5%" },
+      { "min": 500000, "max": 1000000, "rate": 20, "description": "Rs. 5,00,000 to Rs. 10,00,000 — 20%" },
+      { "min": 1000000, "max": null, "rate": 30, "description": "Above Rs. 10,00,000 — 30%" }
+    ],
+    "superSeniorCitizenSlabs": [
+      { "min": 0, "max": 500000, "rate": 0, "description": "Up to Rs. 5,00,000 — Nil (Resident 80+, Finance Bill 2025, Paragraph A(III))" },
+      { "min": 500000, "max": 1000000, "rate": 20, "description": "Rs. 5,00,000 to Rs. 10,00,000 — 20%" },
+      { "min": 1000000, "max": null, "rate": 30, "description": "Above Rs. 10,00,000 — 30%" }
+    ],
     "surcharge": {
+      "_source": "Finance Bill 2025, First Schedule, Paragraph A, Surcharge provisions (pages 101-103)",
       "thresholds": [
         {
           "min": 5000000,
           "max": 10000000,
           "rate": 10,
-          "description": "10% surcharge for income ₹50L - ₹1Cr"
+          "description": "10% surcharge — income > Rs. 50L but <= Rs. 1Cr (Finance Bill 2025, Paragraph A(a))"
         },
         {
           "min": 10000001,
           "max": 20000000,
           "rate": 15,
-          "description": "15% surcharge for income ₹1Cr - ₹2Cr"
+          "description": "15% surcharge — income > Rs. 1Cr but <= Rs. 2Cr (Finance Bill 2025, Paragraph A(b))"
         },
         {
           "min": 20000001,
           "max": 50000000,
           "rate": 25,
-          "description": "25% surcharge for income ₹2Cr - ₹5Cr"
+          "description": "25% surcharge — income > Rs. 2Cr but <= Rs. 5Cr (Finance Bill 2025, Paragraph A(c))"
         },
         {
           "min": 50000001,
           "max": null,
           "rate": 37,
-          "description": "37% surcharge for income above ₹5Cr"
+          "description": "37% surcharge — income > Rs. 5Cr (Finance Bill 2025, Paragraph A(d))"
         }
-      ]
+      ],
+      "marginalReliefApplies": true,
+      "_marginalReliefNote": "Marginal relief applies at each threshold band per Finance Bill 2025 provisos under Paragraph A surcharge"
     },
     "cess": 4,
+    "_cessNote": "4% Health and Education Cess on income-tax + surcharge (unchanged, not amended by Finance Bill 2025)",
+    "rebate87A": {
+      "_source": "Section 87A of Income-tax Act, 1961 (NOT amended by Finance Bill 2025 for AY 2025-26)",
+      "_note": "Finance Bill 2025 Clause 20 amends 87A but takes effect from 1st April 2026 (AY 2026-27). For AY 2025-26, the existing provision applies.",
+      "incomeThreshold": 500000,
+      "maxRebate": 12500,
+      "description": "Rebate under Section 87A — max Rs. 12,500 for income up to Rs. 5,00,000 (pre-amendment, applicable AY 2025-26)"
+    },
     "deductions": {
       "section80C": {
         "limit": 150000,
-        "description": "LIC, PPF, ELSS, NSC, Home Loan Principal, etc.",
+        "description": "LIC, PPF, ELSS, NSC, Home Loan Principal, Tuition Fees, Sukanya Samriddhi etc. — max Rs. 1,50,000",
         "items": [
           "Life Insurance Premium",
           "Public Provident Fund (PPF)",
           "Equity Linked Savings Scheme (ELSS)",
           "National Savings Certificate (NSC)",
           "Home Loan Principal Repayment",
-          "Tuition Fees (2 children)",
+          "Tuition Fees (max 2 children)",
           "Sukanya Samriddhi Yojana",
           "Senior Citizen Savings Scheme",
           "5-Year Fixed Deposit"
@@ -79,130 +106,145 @@
       },
       "section80CCD1B": {
         "limit": 50000,
-        "description": "Additional NPS contribution (over and above 80C)"
+        "_source": "Section 80CCD(1B) — NPS additional contribution over and above 80C. Finance Bill 2025 Clause 17 extends to NPS Vatsalya accounts (minors) effective AY 2026-27 only.",
+        "description": "Additional NPS contribution — max Rs. 50,000 (over and above 80C limit)"
       },
       "section80D": {
         "self": 25000,
         "selfSenior": 50000,
         "parents": 25000,
         "parentsSenior": 50000,
-        "description": "Health insurance premiums",
-        "preventiveHealthCheckup": 5000
+        "preventiveHealthCheckup": 5000,
+        "description": "Health insurance premiums — self/family: Rs. 25,000 (Rs. 50,000 if senior); parents: Rs. 25,000 (Rs. 50,000 if senior)"
       },
       "section80E": {
         "limit": null,
-        "description": "Interest on education loan (no upper limit)"
+        "description": "Interest on education loan — no upper limit"
       },
       "section80G": {
         "limit": null,
-        "description": "Donations to charitable institutions (50% or 100% based on institution)"
+        "description": "Donations to approved charitable institutions — 50% or 100% depending on institution"
       },
       "standardDeduction": {
         "limit": 50000,
-        "description": "Standard deduction for salaried employees"
+        "description": "Standard deduction for salaried employees — Rs. 50,000"
       },
       "hra": {
         "metroPercentage": 50,
         "nonMetroPercentage": 40,
         "rentThresholdPercentage": 10,
-        "description": "House Rent Allowance exemption"
+        "description": "HRA exemption under Rule 2A — minimum of: actual HRA, rent paid minus 10% basic, 50%/40% of basic (metro/non-metro)"
       }
     }
   },
+
   "newRegime": {
-    "name": "New Tax Regime",
+    "name": "New Tax Regime (Section 115BAC)",
+    "_source": "Section 115BAC(1A) of Income-tax Act as it stands for AY 2025-26. Finance Bill 2025 Clause 24 amends this table but takes effect from 1st April 2026 (AY 2026-27).",
+    "_applicableSlabTable": "The 6-slab table below applies for AY 2025-26 (FY 2025-26). The 7-slab table introduced by Finance Bill 2025 Clause 24 applies from AY 2026-27 onwards.",
     "slabs": [
       {
         "min": 0,
         "max": 300000,
         "rate": 0,
-        "description": "Income up to ₹3 lakh"
+        "description": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)"
       },
       {
-        "min": 300001,
+        "min": 300000,
         "max": 600000,
         "rate": 5,
-        "description": "Income from ₹3 lakh to ₹6 lakh"
+        "description": "Rs. 3,00,000 to Rs. 6,00,000 — 5% (Section 115BAC, AY 2025-26)"
       },
       {
-        "min": 600001,
+        "min": 600000,
         "max": 900000,
         "rate": 10,
-        "description": "Income from ₹6 lakh to ₹9 lakh"
+        "description": "Rs. 6,00,000 to Rs. 9,00,000 — 10% (Section 115BAC, AY 2025-26)"
       },
       {
-        "min": 900001,
+        "min": 900000,
         "max": 1200000,
         "rate": 15,
-        "description": "Income from ₹9 lakh to ₹12 lakh"
+        "description": "Rs. 9,00,000 to Rs. 12,00,000 — 15% (Section 115BAC, AY 2025-26)"
       },
       {
-        "min": 1200001,
+        "min": 1200000,
         "max": 1500000,
         "rate": 20,
-        "description": "Income from ₹12 lakh to ₹15 lakh"
+        "description": "Rs. 12,00,000 to Rs. 15,00,000 — 20% (Section 115BAC, AY 2025-26)"
       },
       {
-        "min": 1500001,
+        "min": 1500000,
         "max": null,
         "rate": 30,
-        "description": "Income above ₹15 lakh"
+        "description": "Above Rs. 15,00,000 — 30% (Section 115BAC, AY 2025-26)"
       }
     ],
     "surcharge": {
+      "_source": "Same surcharge structure as old regime — Finance Bill 2025 does not change new regime surcharge rates for AY 2025-26",
       "thresholds": [
-        {
-          "min": 5000000,
-          "max": 10000000,
-          "rate": 10,
-          "description": "10% surcharge for income ₹50L - ₹1Cr"
-        },
-        {
-          "min": 10000001,
-          "max": 20000000,
-          "rate": 15,
-          "description": "15% surcharge for income ₹1Cr - ₹2Cr"
-        },
-        {
-          "min": 20000001,
-          "max": 50000000,
-          "rate": 25,
-          "description": "25% surcharge for income ₹2Cr - ₹5Cr"
-        },
-        {
-          "min": 50000001,
-          "max": null,
-          "rate": 37,
-          "description": "37% surcharge for income above ₹5Cr"
-        }
+        { "min": 5000000, "max": 10000000, "rate": 10, "description": "10% surcharge — income > Rs. 50L but <= Rs. 1Cr" },
+        { "min": 10000001, "max": 20000000, "rate": 15, "description": "15% surcharge — income > Rs. 1Cr but <= Rs. 2Cr" },
+        { "min": 20000001, "max": 50000000, "rate": 25, "description": "25% surcharge — income > Rs. 2Cr but <= Rs. 5Cr" },
+        { "min": 50000001, "max": null, "rate": 37, "description": "37% surcharge — income > Rs. 5Cr" }
       ]
     },
     "cess": 4,
     "rebate87A": {
+      "_source": "Finance Bill 2025 Clause 20 (page 149) — amends 87A proviso: replaces Rs. 7,00,000 with Rs. 12,00,000 and Rs. 25,000 with Rs. 60,000. EFFECTIVE DATE: 1st April 2026 (AY 2026-27). For AY 2025-26, prior values apply.",
       "incomeThreshold": 700000,
       "maxRebate": 25000,
-      "description": "Rebate under Section 87A for income up to ₹7 lakh"
+      "description": "Rebate under Section 87A (New Regime) — max Rs. 25,000 for income up to Rs. 7,00,000 (pre-amendment, AY 2025-26)",
+      "marginalReliefApplies": true,
+      "_marginalReliefNote": "If taxable income > Rs. 7L and tax liability > (income - 7L), rebate = tax - (income - 7L) per existing proviso (b)"
     },
     "deductions": {
       "standardDeduction": {
         "limit": 50000,
-        "description": "Standard deduction for salaried employees (only deduction allowed)"
+        "description": "Standard deduction for salaried employees — Rs. 50,000 (only deduction allowed in new regime)"
       }
     }
   },
+
+  "newRegime_AY2026_27": {
+    "_note": "These are the FUTURE rules effective from AY 2026-27 per Finance Bill 2025. Do NOT use for FY 2025-26 calculations.",
+    "_source": "Finance Bill 2025 Clause 24 (Section 115BAC amendment, pages 152-153) and Clause 20 (Section 87A amendment, page 149) — effective 1st April 2026",
+    "slabs": [
+      { "min": 0, "max": 400000, "rate": 0, "description": "Up to Rs. 4,00,000 — Nil (Finance Bill 2025 Clause 24, AY 2026-27)" },
+      { "min": 400001, "max": 800000, "rate": 5, "description": "Rs. 4,00,001 to Rs. 8,00,000 — 5%" },
+      { "min": 800001, "max": 1200000, "rate": 10, "description": "Rs. 8,00,001 to Rs. 12,00,000 — 10%" },
+      { "min": 1200001, "max": 1600000, "rate": 15, "description": "Rs. 12,00,001 to Rs. 16,00,000 — 15%" },
+      { "min": 1600001, "max": 2000000, "rate": 20, "description": "Rs. 16,00,001 to Rs. 20,00,000 — 20%" },
+      { "min": 2000001, "max": 2400000, "rate": 25, "description": "Rs. 20,00,001 to Rs. 24,00,000 — 25%" },
+      { "min": 2400001, "max": null, "rate": 30, "description": "Above Rs. 24,00,000 — 30%" }
+    ],
+    "rebate87A": {
+      "incomeThreshold": 1200000,
+      "maxRebate": 60000,
+      "description": "Rebate under Section 87A (New Regime, AY 2026-27) — max Rs. 60,000 for income up to Rs. 12,00,000"
+    },
+    "standardDeduction": 75000
+  },
+
   "presumptiveTaxation": {
     "section44AD": {
+      "_source": "Section 44AD, Income-tax Act 1961. Finance Bill 2025 does not amend Section 44AD threshold for AY 2025-26.",
+      "_note": "Threshold is Rs. 2 crore for businesses with cash receipts > 5% of total. Rs. 3 crore threshold (introduced by Finance Act 2023) applies only where cash receipts do not exceed 5% of total receipts.",
       "threshold": 20000000,
+      "thresholdDigitalOnly": 30000000,
       "digitalRate": 6,
       "cashRate": 8,
-      "description": "Presumptive taxation for businesses with turnover < ₹2 crore"
+      "description": "Presumptive taxation — 6% of digital receipts + 8% of cash receipts. Threshold: Rs. 2Cr (Rs. 3Cr if cash <= 5% of total)"
     },
     "section44ADA": {
+      "_source": "Section 44ADA, Income-tax Act 1961. Finance Bill 2025 does not amend this for AY 2025-26.",
       "threshold": 5000000,
+      "thresholdDigitalOnly": 7500000,
       "rate": 50,
-      "description": "Presumptive taxation for professionals with receipts < ₹50 lakh"
+      "description": "Presumptive taxation for professionals — 50% of gross receipts. Threshold: Rs. 50L (Rs. 75L if cash <= 5% of total)"
     }
   },
+
   "validationRules": {
     "maxTDSPercentage": 50,
     "maxHRAPercentage": 50,
@@ -210,6 +252,8 @@
     "minAge": 18,
     "maxAge": 100,
     "seniorCitizenAge": 60,
-    "superSeniorCitizenAge": 80
+    "superSeniorCitizenAge": 80,
+    "panFormat": "^[A-Z]{5}[0-9]{4}[A-Z]$",
+    "tanFormat": "^[A-Z]{4}[0-9]{5}[A-Z]$"
   }
 }

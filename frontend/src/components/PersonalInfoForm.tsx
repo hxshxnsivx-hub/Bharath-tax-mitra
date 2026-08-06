@@ -39,6 +39,12 @@ export function PersonalInfoForm({ sessionId, initialData, onSave }: PersonalInf
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  // Aadhaar privacy masking is AT-REST only: while focused the input shows the
+  // real digits so edits operate on real state. Previously the masked display
+  // (XXXX-XXXX-1234) was fed back through onChange on any keystroke, stripping
+  // the Xs and destroying the first 8 digits — the field then failed
+  // "must be 12 digits" on data the user had entered correctly.
+  const [aadhaarFocused, setAadhaarFocused] = useState(false);
 
   // PAN validation: AAAAA9999A format
   const validatePAN = (pan: string): string | undefined => {
@@ -53,8 +59,10 @@ export function PersonalInfoForm({ sessionId, initialData, onSave }: PersonalInf
   // Aadhaar validation: 12 digits (optional)
   const validateAadhaar = (aadhaar: string): string | undefined => {
     if (!aadhaar) return undefined; // Optional field
-    const aadhaarRegex = /^\d{12}$/;
-    if (!aadhaarRegex.test(aadhaar.replace(/\s/g, ''))) {
+    // Strip ALL non-digits before checking: formatAadhaar stores the value
+    // as 1234-5678-9012, and the old \s-only strip rejected the formatter's
+    // own output ("Aadhaar must be 12 digits" on every valid entry).
+    if (!/^\d{12}$/.test(aadhaar.replace(/\D/g, ''))) {
       return t('form.errors.aadhaarInvalid');
     }
     return undefined;
@@ -159,7 +167,7 @@ export function PersonalInfoForm({ sessionId, initialData, onSave }: PersonalInf
       setIsSaving(true);
       const draft: Omit<SavedDraft, 'draftId'> = {
         sessionId,
-        formData: formData as Record<string, any>,
+        formData: formData as unknown as Record<string, unknown>,
         savedAt: Date.now(),
         autoSave: true,
       };
@@ -192,7 +200,9 @@ export function PersonalInfoForm({ sessionId, initialData, onSave }: PersonalInf
       try {
         const draft = await db.savedDrafts.get(`personal-info-${sessionId}`);
         if (draft && draft.formData) {
-          setFormData(draft.formData as PersonalInfo);
+          // SavedDraft.formData is heterogeneous (Record<string, unknown>) — this
+          // draft key is only ever written by this form, so the shape is known.
+          setFormData(draft.formData as unknown as PersonalInfo);
           setLastSaved(new Date(draft.savedAt));
         }
       } catch (error) {
@@ -405,9 +415,19 @@ export function PersonalInfoForm({ sessionId, initialData, onSave }: PersonalInf
             <input
               id="aadhaar"
               type="text"
-              value={formData.aadhaar ? maskAadhaar(formData.aadhaar) : ''}
+              value={
+                formData.aadhaar
+                  ? aadhaarFocused
+                    ? formatAadhaar(formData.aadhaar)
+                    : maskAadhaar(formData.aadhaar)
+                  : ''
+              }
               onChange={(e) => handleAadhaarChange(e.target.value)}
-              onBlur={() => handleBlur('aadhaar')}
+              onFocus={() => setAadhaarFocused(true)}
+              onBlur={() => {
+                setAadhaarFocused(false);
+                handleBlur('aadhaar');
+              }}
               placeholder="XXXX-XXXX-1234"
               maxLength={14}
               className={`

@@ -12,8 +12,9 @@ export function LanguageSelector() {
   );
 
   useEffect(() => {
-    // Load saved language preference from IndexedDB
+    // Load saved language preference from IndexedDB — mount-only by design.
     loadLanguagePreference();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadLanguagePreference = async () => {
@@ -40,15 +41,15 @@ export function LanguageSelector() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto p-6">
+    <div className="w-full max-w-md mx-auto p-6 pt-14">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="font-display text-4xl font-bold text-foreground mb-2">
           {t('app.name')}
         </h1>
-        <p className="text-gray-600">{t('app.tagline')}</p>
+        <p className="eyebrow text-[hsl(var(--gold-deep))]">{t('app.tagline')}</p>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="hairline bg-card rounded-2xl shadow-elevated p-8">
         <h2 className="text-xl font-semibold text-gray-800 mb-4">
           {t('language.select')}
         </h2>
@@ -62,8 +63,8 @@ export function LanguageSelector() {
                 p-4 rounded-lg border-2 transition-all duration-200
                 ${
                   currentLanguage === lang.code
-                    ? 'border-blue-500 bg-blue-50 shadow-md'
-                    : 'border-gray-200 bg-white hover:border-blue-300 hover:bg-gray-50'
+                    ? 'border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.08)] shadow-md'
+                    : 'border-gray-200 bg-card hover:border-[hsl(var(--gold)/0.5)] hover:bg-secondary/60'
                 }
               `}
             >
@@ -76,7 +77,7 @@ export function LanguageSelector() {
                 </div>
                 {currentLanguage === lang.code && (
                   <svg
-                    className="w-6 h-6 text-blue-500"
+                    className="w-6 h-6 text-[hsl(var(--gold-deep))]"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -98,7 +99,7 @@ export function LanguageSelector() {
 
         <button
           onClick={() => navigate('/auth')}
-          className="mt-6 w-full py-3 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+          className="btn-gold mt-6 w-full py-3 px-4 font-bold rounded-xl transition-colors"
         >
           {t('common.continue')}
         </button>

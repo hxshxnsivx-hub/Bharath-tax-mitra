@@ -35,12 +35,13 @@ export function MobileNumberInput({ onSubmit, isLoading = false }: MobileNumberI
   };
 
   return (
-    <div className="w-full max-w-md mx-auto p-6">
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+    <div className="w-full max-w-md mx-auto p-6 pt-14">
+      <div className="hairline bg-card rounded-2xl shadow-elevated p-8">
+        <div className="eyebrow mb-3 text-[hsl(var(--gold-deep))]">{t('app.name')}</div>
+        <h2 className="font-display text-2xl font-bold text-foreground mb-2">
           {t('auth.welcome')}
         </h2>
-        <p className="text-gray-600 mb-6">{t('auth.enterMobile')}</p>
+        <p className="text-muted-foreground mb-6">{t('auth.enterMobile')}</p>
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -76,14 +77,14 @@ export function MobileNumberInput({ onSubmit, isLoading = false }: MobileNumberI
           <button
             type="submit"
             disabled={isLoading || mobileNumber.length !== 10}
-            className="w-full py-3 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+            className="btn-gold w-full py-3 px-4 font-bold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isLoading ? t('common.loading') : t('auth.sendOTP')}
           </button>
         </form>
 
-        <div className="mt-4 text-center text-sm text-gray-500">
-          <p>We'll send you a 6-digit OTP to verify your number</p>
+        <div className="mt-4 text-center text-sm text-muted-foreground">
+          <p>{t('auth.otpFooter')}</p>
         </div>
       </div>
     </div>

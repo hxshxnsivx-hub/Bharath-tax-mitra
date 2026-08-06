@@ -36,9 +36,19 @@ async function getDeviceSalt(): Promise<Uint8Array> {
 }
 
 /**
- * Get device ID (fingerprint)
+ * Get device ID (fingerprint), optionally scoped to a userId
  */
-function getDeviceId(): string {
+function getDeviceId(userId?: string): string {
+  if (userId !== undefined) {
+    // When userId is provided, derive fingerprint scoped to that user
+    return [
+      navigator.userAgent,
+      navigator.language,
+      userId,
+    ].join('|');
+  }
+
+  // Fallback: use the stored device-id for backward compatibility
   let deviceId = localStorage.getItem('device-id');
   
   if (!deviceId) {
@@ -101,9 +111,9 @@ function generateIV(): Uint8Array {
 /**
  * Encrypt data using AES-GCM-256
  */
-export async function encryptData(plaintext: string): Promise<string> {
+export async function encryptData(plaintext: string, userId?: string): Promise<string> {
   try {
-    const deviceId = getDeviceId();
+    const deviceId = getDeviceId(userId);
     const salt = await getDeviceSalt();
     const key = await deriveKey(deviceId, salt);
     
@@ -138,9 +148,9 @@ export async function encryptData(plaintext: string): Promise<string> {
 /**
  * Decrypt data using AES-GCM-256
  */
-export async function decryptData(encryptedData: string): Promise<string> {
+export async function decryptData(encryptedData: string, userId?: string): Promise<string> {
   try {
-    const deviceId = getDeviceId();
+    const deviceId = getDeviceId(userId);
     const salt = await getDeviceSalt();
     const key = await deriveKey(deviceId, salt);
     

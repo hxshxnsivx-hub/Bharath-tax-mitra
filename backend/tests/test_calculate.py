@@ -653,17 +653,19 @@ class TestHelpers:
         assert _presumptive_income(0, 5_000_000) == 400_000  # 8% of 50L
 
     def test_presumptive_income_above_threshold(self):
-        # Cash > 5% → threshold = 2Cr; 25M > 2Cr → not eligible
-        assert _presumptive_income(0, 25_000_000) == 0
+        # Cash > 5% → threshold = 2Cr; 25M > 2Cr → not eligible.
+        # OPT-A3: ineligibility is now None (0 is a legitimate presumptive
+        # result for sub-rupee turnover), callers fall back to actuals.
+        assert _presumptive_income(0, 25_000_000) is None
 
     def test_surcharge_zero_below_50l(self):
-        surcharge, rate = _surcharge_with_marginal_relief(3_000_000, 500_000, SURCHARGE_THRESHOLDS)
+        surcharge, rate = _surcharge_with_marginal_relief(3_000_000, 500_000, SURCHARGE_THRESHOLDS, NEW_REGIME_SLABS)
         assert surcharge == 0
         assert rate == 0
 
     def test_surcharge_10pct_above_50l(self):
         # taxable = 55L, tax = 14L
-        surcharge, rate = _surcharge_with_marginal_relief(5_500_000, 1_400_000, SURCHARGE_THRESHOLDS)
+        surcharge, rate = _surcharge_with_marginal_relief(5_500_000, 1_400_000, SURCHARGE_THRESHOLDS, NEW_REGIME_SLABS)
         assert rate == 10
         assert surcharge > 0
 
@@ -770,3 +772,248 @@ class TestCrossVerification:
         assert result["surcharge"]          == 0
         assert result["cess"]               == 11_400
         assert result["totalTaxLiability"]  == 296_400
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SCENARIO 11 — IT Department authoritative scenarios (cross-language parity)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class TestITDepartmentScenarios:
+    """
+    Hand-computed statutory scenarios mirrored from the frontend ITD validation
+    suite (taxCalculator.itd-scenarios.test.ts). Expected values are derived BY HAND
+    from Finance Bill 2025 / Section 115BAC / Section 87A / Section 44AD — NOT by
+    re-running the engine — and must equal the Python engine output to the rupee,
+    reinforcing the TS↔Python parity requirement (task 0.5.3).
+
+    FY 2025-26 rules in force: new-regime 6-slab table, SD ₹50,000, 87A ₹25k ≤ ₹7L;
+    old-regime SD ₹50,000, 87A ₹12,500 ≤ ₹5L; cess 4%. (The ₹75,000 SD / 7-slab table
+    / ₹60k rebate are AY 2026-27 changes and are intentionally not used here.)
+    """
+
+    def _salary_only(self, gross, prof_tax=0):
+        return {
+            "salary": {
+                "grossSalary": gross,
+                "basicSalary": round(gross * 0.4),
+                "hraReceived": 0,
+                "specialAllowance": 0,
+                "otherAllowances": 0,
+                "professionalTax": prof_tax,
+            }
+        }
+
+    # ── New regime slab boundaries & 87A ──────────────────────────────────────
+
+    def test_nr1_taxable_3l_nil(self):
+        r = calculate_new_regime(self._salary_only(350_000), _zero_deductions())
+        assert r["taxableIncome"] == 300_000
+        assert r["totalTaxLiability"] == 0
+
+    def test_nr2_taxable_6l_full_rebate(self):
+        # 5% of (6L−3L) = 15,000; 87A min(15k,25k)=15k → 0
+        r = calculate_new_regime(self._salary_only(650_000), _zero_deductions())
+        assert r["taxBeforeSurcharge"] == 15_000
+        assert r["rebate87A"] == 15_000
+        assert r["totalTaxLiability"] == 0
+
+    def test_nr3_taxable_7l_rebate_cliff(self):
+        # 15,000 + 10%*1L = 25,000; 87A 25,000 → 0
+        r = calculate_new_regime(self._salary_only(750_000), _zero_deductions())
+        assert r["taxableIncome"] == 700_000
+        assert r["taxBeforeSurcharge"] == 25_000
+        assert r["rebate87A"] == 25_000
+        assert r["totalTaxLiability"] == 0
+
+    def test_nr4_taxable_710k_marginal_relief(self):
+        # slab 26,000; rebate 16,000; tax 10,000; cess 400 → 10,400
+        r = calculate_new_regime(self._salary_only(760_000), _zero_deductions())
+        assert r["taxableIncome"] == 710_000
+        assert r["taxBeforeSurcharge"] == 26_000
+        assert r["rebate87A"] == 16_000
+        assert r["cess"] == 400
+        assert r["totalTaxLiability"] == 10_400
+
+    def test_nr5_taxable_9l(self):
+        # 15,000 + 30,000 = 45,000; cess 1,800 → 46,800
+        r = calculate_new_regime(self._salary_only(950_000), _zero_deductions())
+        assert r["taxBeforeSurcharge"] == 45_000
+        assert r["rebate87A"] == 0
+        assert r["totalTaxLiability"] == 46_800
+
+    def test_nr6_taxable_12l(self):
+        # 90,000 + cess 3,600 → 93,600
+        r = calculate_new_regime(self._salary_only(1_250_000), _zero_deductions())
+        assert r["taxableIncome"] == 1_200_000
+        assert r["taxBeforeSurcharge"] == 90_000
+        assert r["totalTaxLiability"] == 93_600
+
+    def test_nr7_taxable_15l(self):
+        # 150,000 + cess 6,000 → 156,000
+        r = calculate_new_regime(self._salary_only(1_550_000), _zero_deductions())
+        assert r["taxBeforeSurcharge"] == 150_000
+        assert r["totalTaxLiability"] == 156_000
+
+    def test_nr8_taxable_24l_no_surcharge(self):
+        # 150,000 + 30%*9L = 420,000; cess 16,800 → 436,800
+        r = calculate_new_regime(self._salary_only(2_450_000), _zero_deductions())
+        assert r["taxBeforeSurcharge"] == 420_000
+        assert r["surcharge"] == 0
+        assert r["totalTaxLiability"] == 436_800
+
+    # ── Surcharge bands with marginal relief ──────────────────────────────────
+
+    def test_sur1_60l_10pct_no_relief(self):
+        # slab 1,500,000; surcharge 150,000; total 1,716,000
+        r = calculate_new_regime(self._salary_only(6_050_000), _zero_deductions())
+        assert r["taxableIncome"] == 6_000_000
+        assert r["taxBeforeSurcharge"] == 1_500_000
+        assert r["surchargeRate"] == 10
+        assert r["surcharge"] == 150_000
+        assert r["totalTaxLiability"] == 1_716_000
+
+    def test_sur2_just_above_50l_relief(self):
+        # slab 1,203,000; surcharge capped at 7,000; total 1,258,400
+        r = calculate_new_regime(self._salary_only(5_060_000), _zero_deductions())
+        assert r["taxableIncome"] == 5_010_000
+        assert r["taxBeforeSurcharge"] == 1_203_000
+        assert r["surcharge"] == 7_000
+        assert r["taxAfterSurcharge"] == 1_210_000
+        assert r["totalTaxLiability"] == 1_258_400
+        # Marginal relief invariant vs ₹50L
+        assert r["taxAfterSurcharge"] <= 1_200_000 + (r["taxableIncome"] - 5_000_000)
+
+    def test_sur3_just_above_1cr_relief(self):
+        # 15% band; slab 2,703,000; surcharge 277,000; total 3,099,200
+        r = calculate_new_regime(self._salary_only(10_060_000), _zero_deductions())
+        assert r["taxableIncome"] == 10_010_000
+        assert r["taxBeforeSurcharge"] == 2_703_000
+        assert r["surchargeRate"] == 15
+        assert r["surcharge"] == 277_000
+        assert r["taxAfterSurcharge"] == 2_980_000
+        assert r["totalTaxLiability"] == 3_099_200
+        # Marginal relief invariant vs ₹1Cr (liability@1Cr = 2,970,000)
+        assert r["taxAfterSurcharge"] <= 2_970_000 + (r["taxableIncome"] - 10_000_000)
+
+    # ── Old regime — deductions, 87A, age slabs ───────────────────────────────
+
+    def test_or1_taxable_4_5l_87a_zero(self):
+        r = calculate_old_regime(self._salary_only(500_000), _zero_deductions())
+        assert r["taxableIncome"] == 450_000
+        assert r["taxBeforeSurcharge"] == 10_000
+        assert r["rebate87A"] == 10_000
+        assert r["totalTaxLiability"] == 0
+
+    def test_or2_full_deductions(self):
+        income = {
+            "salary": {
+                "grossSalary": 1_000_000, "basicSalary": 500_000,
+                "hraReceived": 100_000, "specialAllowance": 0,
+                "otherAllowances": 0, "professionalTax": 2_400,
+            }
+        }
+        ded = {
+            **_zero_deductions(),
+            "section80C": {"lic": 150_000, "ppf": 0, "elss": 0, "nsc": 0, "homeLoanPrincipal": 0, "tuitionFees": 0, "sukanyaSamriddhi": 0, "other": 0},
+            "section80D": {"selfPremium": 25_000, "parentsPremium": 0, "preventiveHealthCheckup": 0, "isSelfSenior": False, "isParentsSenior": False},
+            "hra": {"rentPaid": 180_000, "isMetro": True},
+        }
+        r = calculate_old_regime(income, ded)
+        assert r["grossTotalIncome"] == 1_100_000
+        assert r["deductionBreakdown"]["section80C"] == 150_000
+        assert r["deductionBreakdown"]["section80D"] == 25_000
+        assert r["deductionBreakdown"]["hra"] == 100_000
+        assert r["deductionBreakdown"]["professionalTax"] == 2_400
+        assert r["totalDeductions"] == 327_400
+        assert r["taxableIncome"] == 772_600
+        assert r["taxBeforeSurcharge"] == 67_020
+        assert r["rebate87A"] == 0
+        assert r["cess"] == 2_681
+        assert r["totalTaxLiability"] == 69_701
+
+    def test_or3_senior_slabs(self):
+        r = calculate_old_regime(self._salary_only(700_000), _zero_deductions(), _resident_personal_info(is_senior=True))
+        assert r["taxableIncome"] == 650_000
+        assert r["taxBeforeSurcharge"] == 40_000
+        assert r["cess"] == 1_600
+        assert r["totalTaxLiability"] == 41_600
+
+    def test_or4_super_senior_slabs(self):
+        r = calculate_old_regime(self._salary_only(700_000), _zero_deductions(), _resident_personal_info(is_super_senior=True))
+        assert r["taxableIncome"] == 650_000
+        assert r["taxBeforeSurcharge"] == 30_000
+        assert r["cess"] == 1_200
+        assert r["totalTaxLiability"] == 31_200
+
+    def test_or5_standard_slabs(self):
+        r = calculate_old_regime(self._salary_only(700_000), _zero_deductions(), _resident_personal_info())
+        assert r["taxableIncome"] == 650_000
+        assert r["taxBeforeSurcharge"] == 42_500
+        assert r["cess"] == 1_700
+        assert r["totalTaxLiability"] == 44_200
+
+    # ── Section 44AD presumptive ──────────────────────────────────────────────
+
+    def _business_only(self, digital, cash, gross=None, expenses=0):
+        return {
+            "salary": {"grossSalary": 0, "basicSalary": 0, "hraReceived": 0, "specialAllowance": 0, "otherAllowances": 0, "professionalTax": 0},
+            "businessIncome": {
+                "grossReceipts": gross if gross is not None else digital + cash,
+                "digitalReceipts": digital,
+                "cashReceipts": cash,
+                "expenses": expenses,
+            },
+        }
+
+    def test_44ad1_digital_6pct(self):
+        r = calculate_new_regime(self._business_only(5_000_000, 0), _zero_deductions())
+        assert r["incomeBreakdown"]["businessIncome"] == 300_000
+
+    def test_44ad5_cash_8pct(self):
+        r = calculate_new_regime(self._business_only(0, 1_000_000), _zero_deductions())
+        assert r["incomeBreakdown"]["businessIncome"] == 80_000
+
+    def test_44ad2_above_2cr_cash_heavy(self):
+        r = calculate_new_regime(self._business_only(0, 25_000_000, 25_000_000, 20_000_000), _zero_deductions())
+        assert r["incomeBreakdown"]["businessIncome"] == 5_000_000
+
+    def test_44ad3_3cr_threshold(self):
+        r = calculate_new_regime(self._business_only(24_000_000, 1_000_000), _zero_deductions())
+        assert r["incomeBreakdown"]["businessIncome"] == 1_520_000
+
+    def test_44ad4_presumptive_yields_tax(self):
+        r = calculate_new_regime(self._business_only(20_000_000, 0), _zero_deductions())
+        assert r["incomeBreakdown"]["businessIncome"] == 1_200_000
+        assert r["taxableIncome"] == 1_150_000
+        assert r["taxBeforeSurcharge"] == 82_500
+        assert r["cess"] == 3_300
+        assert r["totalTaxLiability"] == 85_800
+
+    # ── Regime comparison ─────────────────────────────────────────────────────
+
+    def test_rc1_new_regime_wins(self):
+        cmp = compare_regimes(self._salary_only(800_000), _zero_deductions())
+        assert cmp["newRegime"]["totalTaxLiability"] == 31_200
+        assert cmp["oldRegime"]["totalTaxLiability"] == 65_000
+        assert cmp["recommendedRegime"] == "new"
+        assert cmp["savings"] == 33_800
+
+    def test_rc2_old_regime_wins(self):
+        income = {
+            "salary": {
+                "grossSalary": 1_000_000, "basicSalary": 500_000,
+                "hraReceived": 100_000, "specialAllowance": 0,
+                "otherAllowances": 0, "professionalTax": 2_400,
+            }
+        }
+        ded = {
+            **_zero_deductions(),
+            "section80C": {"lic": 150_000, "ppf": 0, "elss": 0, "nsc": 0, "homeLoanPrincipal": 0, "tuitionFees": 0, "sukanyaSamriddhi": 0, "other": 0},
+            "section80D": {"selfPremium": 25_000, "parentsPremium": 0, "preventiveHealthCheckup": 0, "isSelfSenior": False, "isParentsSenior": False},
+            "hra": {"rentPaid": 180_000, "isMetro": True},
+        }
+        cmp = compare_regimes(income, ded)
+        assert cmp["oldRegime"]["totalTaxLiability"] == 69_701
+        assert cmp["newRegime"]["totalTaxLiability"] == 69_826
+        assert cmp["recommendedRegime"] == "old"
+        assert cmp["savings"] == 125

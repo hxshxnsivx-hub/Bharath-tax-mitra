@@ -34,8 +34,8 @@ describe('BusinessIncomeForm', () => {
     renderForm();
 
     expect(screen.getByText(/Business Income/i)).toBeInTheDocument();
-    expect(screen.getByText(/Section 44AD/i)).toBeInTheDocument();
-    expect(screen.getByText(/Presumptive taxation/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Section 44AD/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Presumptive taxation/i).length).toBeGreaterThan(0);
   });
 
   it('displays Section 44AD information points', () => {
@@ -118,7 +118,7 @@ describe('BusinessIncomeForm', () => {
 
     await waitFor(() => {
       // 1,000,000 * 6% = 60,000
-      expect(screen.getByText(/₹60,000/)).toBeInTheDocument();
+      expect(screen.getAllByText(/₹60,000/).length).toBeGreaterThan(0);
     });
   });
 
@@ -130,8 +130,8 @@ describe('BusinessIncomeForm', () => {
 
     expect(screen.getByText(/Income from Digital/i)).toBeInTheDocument();
     expect(screen.getByText(/Income from Cash/i)).toBeInTheDocument();
-    expect(screen.getByText(/6%/)).toBeInTheDocument();
-    expect(screen.getByText(/8%/)).toBeInTheDocument();
+    expect(screen.getAllByText(/6%/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/8%/).length).toBeGreaterThan(0);
   });
 
   it('validates that at least one receipt type is entered', async () => {
@@ -199,7 +199,7 @@ describe('BusinessIncomeForm', () => {
     expect(screen.getByText(/Retail Trade/i)).toBeInTheDocument();
     expect(screen.getByText(/Wholesale Trade/i)).toBeInTheDocument();
     expect(screen.getByText(/Manufacturing/i)).toBeInTheDocument();
-    expect(screen.getByText(/Services/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Services/i).length).toBeGreaterThan(0);
     expect(screen.getByText(/Professional Services/i)).toBeInTheDocument();
     expect(screen.getByText(/Trading/i)).toBeInTheDocument();
   });

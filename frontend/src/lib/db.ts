@@ -1,5 +1,6 @@
 import Dexie, { Table } from 'dexie';
 import type { TaxRules } from '../../../shared/types/tax-rules';
+import type { TaxCalculationResult } from '../../../shared/types/tax-calculation';
 
 // Database schema interfaces
 export interface UserProfile {
@@ -19,11 +20,11 @@ export interface TaxSession {
   userId: string;
   financialYear: string;
   status: 'draft' | 'review' | 'exported' | 'filed';
-  extractedData?: Record<string, any>;
-  userEdits?: Record<string, any>;
+  extractedData?: Record<string, unknown>;
+  userEdits?: Record<string, unknown>;
   calculationResults?: {
-    oldRegime?: any;
-    newRegime?: any;
+    oldRegime?: TaxCalculationResult;
+    newRegime?: TaxCalculationResult;
   };
   validationWarnings?: Array<{
     field: string;
@@ -40,7 +41,8 @@ export interface PendingRequest {
   requestId: string;
   method: 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   endpoint: string;
-  payload: any;
+  /** Request body — shape depends on the queued endpoint; serialised as JSON on replay. */
+  payload: unknown;
   timestamp: number;
   retryCount: number;
   maxRetries: number;
@@ -49,7 +51,8 @@ export interface PendingRequest {
 export interface SavedDraft {
   draftId: string;
   sessionId: string;
-  formData: Record<string, any>;
+  /** Heterogeneous — each form saves its own section shape; cast at read sites. */
+  formData: Record<string, unknown>;
   savedAt: number;
   autoSave: boolean;
 }
@@ -60,13 +63,6 @@ export interface TaxRulesCache {
   rules: TaxRules;
   cachedAt: number;
   expiresAt: number;
-}
-
-export interface LanguagePack {
-  languageCode: string;
-  translations: Record<string, string>;
-  version: string;
-  cachedAt: number;
 }
 
 export interface FaqCache {
@@ -85,7 +81,6 @@ export class BharatTaxMitraDB extends Dexie {
   pendingRequests!: Table<PendingRequest, string>;
   savedDrafts!: Table<SavedDraft, string>;
   taxRules!: Table<TaxRulesCache, string>;
-  languagePacks!: Table<LanguagePack, string>;
   faqCache!: Table<FaqCache, string>;
 
   constructor() {
@@ -99,6 +94,10 @@ export class BharatTaxMitraDB extends Dexie {
       taxRules: 'financialYear, expiresAt',
       languagePacks: 'languageCode',
       faqCache: 'questionHash, [languageCode+questionHash], expiresAt',
+    });
+
+    this.version(2).stores({
+      languagePacks: null, // drop the languagePacks store
     });
   }
 
@@ -152,9 +151,9 @@ export class BharatTaxMitraDB extends Dexie {
       // Encrypt sensitive fields
       const encryptedProfile: UserProfile = {
         ...profile,
-        mobileNumber: await encryptData(profile.mobileNumber),
-        authToken: profile.authToken ? await encryptData(profile.authToken) : undefined,
-        refreshToken: profile.refreshToken ? await encryptData(profile.refreshToken) : undefined,
+        mobileNumber: await encryptData(profile.mobileNumber, profile.userId),
+        authToken: profile.authToken ? await encryptData(profile.authToken, profile.userId) : undefined,
+        refreshToken: profile.refreshToken ? await encryptData(profile.refreshToken, profile.userId) : undefined,
       };
 
       await this.profiles.put(encryptedProfile);
@@ -178,9 +177,9 @@ export class BharatTaxMitraDB extends Dexie {
       // Decrypt sensitive fields
       return {
         ...encryptedProfile,
-        mobileNumber: await decryptData(encryptedProfile.mobileNumber),
-        authToken: encryptedProfile.authToken ? await decryptData(encryptedProfile.authToken) : undefined,
-        refreshToken: encryptedProfile.refreshToken ? await decryptData(encryptedProfile.refreshToken) : undefined,
+        mobileNumber: await decryptData(encryptedProfile.mobileNumber, userId),
+        authToken: encryptedProfile.authToken ? await decryptData(encryptedProfile.authToken, userId) : undefined,
+        refreshToken: encryptedProfile.refreshToken ? await decryptData(encryptedProfile.refreshToken, userId) : undefined,
       };
     } catch (error) {
       console.error('Failed to get profile:', error);
@@ -196,6 +195,39 @@ export class BharatTaxMitraDB extends Dexie {
       throw error;
     }
   }
+
+  /**
+   * Right-to-erasure (task 4.3.3): wipe EVERY local store — profiles, sessions,
+   * drafts, queued requests, cached rules, cached FAQs. The AES-GCM encryption
+   * key is derived (not stored) from userId+deviceId, so clearing the data is a
+   * complete erasure — there is nothing left to decrypt.
+   */
+  async deleteAllUserData(): Promise<void> {
+    await Promise.all([
+      this.profiles.clear(),
+      this.taxSessions.clear(),
+      this.pendingRequests.clear(),
+      this.savedDrafts.clear(),
+      this.taxRules.clear(),
+      this.faqCache.clear(),
+    ]);
+  }
+}
+
+/**
+ * Best-effort local storage usage (task 4.11.1). Returns bytes used and the
+ * origin quota where the Storage API is available; zeros otherwise.
+ */
+export async function getStorageEstimate(): Promise<{ usage: number; quota: number }> {
+  try {
+    if (navigator.storage?.estimate) {
+      const { usage = 0, quota = 0 } = await navigator.storage.estimate();
+      return { usage, quota };
+    }
+  } catch (error) {
+    console.error('Failed to estimate storage:', error);
+  }
+  return { usage: 0, quota: 0 };
 }
 
 // Export singleton instance

@@ -1,0 +1,234 @@
+{
+  "_source": "Finance Bill 2025, Bill No. 14 of 2025, as introduced in Lok Sabha on 1st February 2025",
+  "_auditNote": "Slabs extracted from Finance Bill 2025 Clause 24 (Section 115BAC amendment, pages 152-153) and Clause 20 (Section 87A amendment, page 149). Effective 1st April 2026 (AY 2026-27).",
+  "version": "1.0.0",
+  "financialYear": "FY2026-27",
+  "assessmentYear": "AY2026-27",
+  "effectiveFrom": "2026-04-01",
+  "effectiveTo": "2027-03-31",
+
+  "oldRegime": {
+    "name": "Old Tax Regime",
+    "_source": "Finance Bill 2025, First Schedule, Part III, Paragraph A — old regime slabs unchanged for AY 2026-27",
+    "slabs": [
+      {
+        "min": 0,
+        "max": 250000,
+        "rate": 0,
+        "description": "Income up to Rs. 2,50,000 — Nil"
+      },
+      {
+        "min": 250000,
+        "max": 500000,
+        "rate": 5,
+        "description": "Rs. 2,50,000 to Rs. 5,00,000 — 5%"
+      },
+      {
+        "min": 500000,
+        "max": 1000000,
+        "rate": 20,
+        "description": "Rs. 5,00,000 to Rs. 10,00,000 — 20%"
+      },
+      {
+        "min": 1000000,
+        "max": null,
+        "rate": 30,
+        "description": "Above Rs. 10,00,000 — 30%"
+      }
+    ],
+    "seniorCitizenSlabs": [
+      { "min": 0, "max": 300000, "rate": 0, "description": "Up to Rs. 3,00,000 — Nil (Resident 60-79)" },
+      { "min": 300000, "max": 500000, "rate": 5, "description": "Rs. 3,00,000 to Rs. 5,00,000 — 5%" },
+      { "min": 500000, "max": 1000000, "rate": 20, "description": "Rs. 5,00,000 to Rs. 10,00,000 — 20%" },
+      { "min": 1000000, "max": null, "rate": 30, "description": "Above Rs. 10,00,000 — 30%" }
+    ],
+    "superSeniorCitizenSlabs": [
+      { "min": 0, "max": 500000, "rate": 0, "description": "Up to Rs. 5,00,000 — Nil (Resident 80+)" },
+      { "min": 500000, "max": 1000000, "rate": 20, "description": "Rs. 5,00,000 to Rs. 10,00,000 — 20%" },
+      { "min": 1000000, "max": null, "rate": 30, "description": "Above Rs. 10,00,000 — 30%" }
+    ],
+    "surcharge": {
+      "thresholds": [
+        {
+          "min": 5000000,
+          "max": 10000000,
+          "rate": 10,
+          "description": "10% surcharge — income > Rs. 50L but <= Rs. 1Cr"
+        },
+        {
+          "min": 10000001,
+          "max": 20000000,
+          "rate": 15,
+          "description": "15% surcharge — income > Rs. 1Cr but <= Rs. 2Cr"
+        },
+        {
+          "min": 20000001,
+          "max": 50000000,
+          "rate": 25,
+          "description": "25% surcharge — income > Rs. 2Cr but <= Rs. 5Cr"
+        },
+        {
+          "min": 50000001,
+          "max": null,
+          "rate": 37,
+          "description": "37% surcharge — income > Rs. 5Cr"
+        }
+      ],
+      "marginalReliefApplies": true
+    },
+    "cess": 4,
+    "rebate87A": {
+      "_source": "Section 87A — old regime rebate unchanged for AY 2026-27",
+      "incomeThreshold": 500000,
+      "maxRebate": 12500,
+      "description": "Rebate under Section 87A — max Rs. 12,500 for income up to Rs. 5,00,000"
+    },
+    "deductions": {
+      "section80C": {
+        "limit": 150000,
+        "description": "LIC, PPF, ELSS, NSC, Home Loan Principal, Tuition Fees, Sukanya Samriddhi etc. — max Rs. 1,50,000",
+        "items": [
+          "Life Insurance Premium",
+          "Public Provident Fund (PPF)",
+          "Equity Linked Savings Scheme (ELSS)",
+          "National Savings Certificate (NSC)",
+          "Home Loan Principal Repayment",
+          "Tuition Fees (max 2 children)",
+          "Sukanya Samriddhi Yojana",
+          "Senior Citizen Savings Scheme",
+          "5-Year Fixed Deposit"
+        ]
+      },
+      "section80CCD1B": {
+        "limit": 50000,
+        "description": "Additional NPS contribution — max Rs. 50,000 (over and above 80C limit)"
+      },
+      "section80D": {
+        "self": 25000,
+        "selfSenior": 50000,
+        "parents": 25000,
+        "parentsSenior": 50000,
+        "preventiveHealthCheckup": 5000,
+        "description": "Health insurance premiums — self/family: Rs. 25,000 (Rs. 50,000 if senior); parents: Rs. 25,000 (Rs. 50,000 if senior)"
+      },
+      "section80E": {
+        "limit": null,
+        "description": "Interest on education loan — no upper limit"
+      },
+      "section80G": {
+        "limit": null,
+        "description": "Donations to approved charitable institutions — 50% or 100% depending on institution"
+      },
+      "standardDeduction": {
+        "limit": 50000,
+        "description": "Standard deduction for salaried employees — Rs. 50,000"
+      },
+      "hra": {
+        "metroPercentage": 50,
+        "nonMetroPercentage": 40,
+        "rentThresholdPercentage": 10,
+        "description": "HRA exemption under Rule 2A — minimum of: actual HRA, rent paid minus 10% basic, 50%/40% of basic (metro/non-metro)"
+      }
+    }
+  },
+
+  "newRegime": {
+    "name": "New Tax Regime (Section 115BAC)",
+    "_source": "Finance Bill 2025 Clause 24 (Section 115BAC amendment, pages 152-153) — effective 1st April 2026 (AY 2026-27)",
+    "slabs": [
+      {
+        "min": 0,
+        "max": 400000,
+        "rate": 0,
+        "description": "Up to Rs. 4,00,000 — Nil (Finance Bill 2025 Clause 24, AY 2026-27)"
+      },
+      {
+        "min": 400001,
+        "max": 800000,
+        "rate": 5,
+        "description": "Rs. 4,00,001 to Rs. 8,00,000 — 5%"
+      },
+      {
+        "min": 800001,
+        "max": 1200000,
+        "rate": 10,
+        "description": "Rs. 8,00,001 to Rs. 12,00,000 — 10%"
+      },
+      {
+        "min": 1200001,
+        "max": 1600000,
+        "rate": 15,
+        "description": "Rs. 12,00,001 to Rs. 16,00,000 — 15%"
+      },
+      {
+        "min": 1600001,
+        "max": 2000000,
+        "rate": 20,
+        "description": "Rs. 16,00,001 to Rs. 20,00,000 — 20%"
+      },
+      {
+        "min": 2000001,
+        "max": 2400000,
+        "rate": 25,
+        "description": "Rs. 20,00,001 to Rs. 24,00,000 — 25%"
+      },
+      {
+        "min": 2400001,
+        "max": null,
+        "rate": 30,
+        "description": "Above Rs. 24,00,000 — 30%"
+      }
+    ],
+    "surcharge": {
+      "_source": "Same surcharge structure as old regime — no changes for AY 2026-27",
+      "thresholds": [
+        { "min": 5000000, "max": 10000000, "rate": 10, "description": "10% surcharge — income > Rs. 50L but <= Rs. 1Cr" },
+        { "min": 10000001, "max": 20000000, "rate": 15, "description": "15% surcharge — income > Rs. 1Cr but <= Rs. 2Cr" },
+        { "min": 20000001, "max": 50000000, "rate": 25, "description": "25% surcharge — income > Rs. 2Cr but <= Rs. 5Cr" },
+        { "min": 50000001, "max": null, "rate": 37, "description": "37% surcharge — income > Rs. 5Cr" }
+      ]
+    },
+    "cess": 4,
+    "rebate87A": {
+      "_source": "Finance Bill 2025 Clause 20 (page 149) — amends 87A: Rs. 12,00,000 threshold, Rs. 60,000 rebate. Effective 1st April 2026 (AY 2026-27).",
+      "incomeThreshold": 1200000,
+      "maxRebate": 60000,
+      "description": "Rebate under Section 87A (New Regime, AY 2026-27) — max Rs. 60,000 for income up to Rs. 12,00,000",
+      "marginalReliefApplies": true
+    },
+    "deductions": {
+      "standardDeduction": {
+        "limit": 75000,
+        "description": "Standard deduction for salaried employees — Rs. 75,000 (AY 2026-27)"
+      }
+    }
+  },
+
+  "presumptiveTaxation": {
+    "section44AD": {
+      "threshold": 20000000,
+      "thresholdDigitalOnly": 30000000,
+      "digitalRate": 6,
+      "cashRate": 8,
+      "description": "Presumptive taxation — 6% of digital receipts + 8% of cash receipts. Threshold: Rs. 2Cr (Rs. 3Cr if cash <= 5% of total)"
+    },
+    "section44ADA": {
+      "threshold": 5000000,
+      "thresholdDigitalOnly": 7500000,
+      "rate": 50,
+      "description": "Presumptive taxation for professionals — 50% of gross receipts. Threshold: Rs. 50L (Rs. 75L if cash <= 5% of total)"
+    }
+  },
+
+  "validationRules": {
+    "maxTDSPercentage": 50,
+    "maxHRAPercentage": 50,
+    "maxDeductionPercentage": 100,
+    "minAge": 18,
+    "maxAge": 100,
+    "seniorCitizenAge": 60,
+    "superSeniorCitizenAge": 80,
+    "panFormat": "^[A-Z]{5}[0-9]{4}[A-Z]$",
+    "tanFormat": "^[A-Z]{4}[0-9]{5}[A-Z]$"
+  }
+}

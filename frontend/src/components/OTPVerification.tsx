@@ -100,11 +100,11 @@ export function OTPVerification({
   };
 
   return (
-    <div className="w-full max-w-md mx-auto p-6">
-      <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="w-full max-w-md mx-auto p-6 pt-14">
+      <div className="hairline bg-card rounded-2xl shadow-elevated p-8">
         <button
           onClick={onBack}
-          className="mb-4 text-blue-600 hover:text-blue-700 flex items-center"
+          className="mb-4 text-[hsl(var(--gold-deep))] hover:opacity-80 flex items-center"
         >
           <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -112,7 +112,7 @@ export function OTPVerification({
           {t('common.back')}
         </button>
 
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+        <h2 className="font-display text-2xl font-bold text-foreground mb-2">
           {t('auth.verifyOTP')}
         </h2>
         <p className="text-gray-600 mb-6">
@@ -151,7 +151,7 @@ export function OTPVerification({
         <button
           onClick={() => handleSubmit(otp.join(''))}
           disabled={isLoading || otp.some(d => d === '')}
-          className="w-full py-3 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors mb-4"
+          className="btn-gold w-full py-3 px-4 font-bold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors mb-4"
         >
           {isLoading ? t('common.loading') : t('auth.verifyOTP')}
         </button>

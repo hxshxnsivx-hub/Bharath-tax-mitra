@@ -1,0 +1,4890 @@
+{
+  "_meta": {
+    "purpose": "OPT-A2 golden vectors — canonical inputs and expected RegimeComparisonResult. Both the TS and Python engines assert against this file in CI. Numeric fields are the contract; analysis prose and slab labels are not compared.",
+    "generator": "frontend/scripts/generate-golden-vectors.ts (TS engine is the reference)",
+    "rulesVersion": "2.0.0",
+    "financialYear": "FY2025-26",
+    "generatedAt": "2026-07-12T16:23:11.274Z",
+    "vectorCount": 27
+  },
+  "vectors": [
+    {
+      "id": "V01-zero",
+      "description": "Zero income — floor behaviour",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 0,
+            "basicSalary": 0,
+            "hraReceived": 0,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 0
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 0,
+            "ppf": 0,
+            "elss": 0,
+            "nsc": 0,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 0
+          },
+          "section80D": {
+            "selfPremium": 0,
+            "parentsPremium": 0,
+            "preventiveHealthCheckup": 0,
+            "isSelfSenior": false,
+            "isParentsSenior": false
+          },
+          "section80E": {
+            "educationLoanInterest": 0
+          },
+          "section80G": {
+            "donations": 0
+          },
+          "hra": {
+            "rentPaid": 0,
+            "isMetro": false
+          },
+          "section16": {
+            "professionalTax": 0
+          }
+        },
+        "personalInfo": null
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 0,
+          "incomeBreakdown": {
+            "salary": 0,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 0,
+          "slabWiseTax": [],
+          "taxBeforeSurcharge": 0,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 0,
+          "cess": 0,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 0,
+          "effectiveTaxRate": 0,
+          "takeHomeIncome": 0
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 0,
+          "incomeBreakdown": {
+            "salary": 0,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 0,
+          "slabWiseTax": [],
+          "taxBeforeSurcharge": 0,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 0,
+          "cess": 0,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 0,
+          "effectiveTaxRate": 0,
+          "takeHomeIncome": 0
+        },
+        "recommendedRegime": "old",
+        "savings": 0,
+        "savingsPercentage": 0,
+        "deductionsLost": 0,
+        "analysis": {
+          "oldRegimeBenefits": [],
+          "newRegimeBenefits": [
+            "Simpler filing — fewer deductions to track",
+            "Eligible for full 87A rebate — zero tax"
+          ],
+          "recommendation": "Both regimes result in equal tax. Choose New Regime for simpler filing."
+        }
+      }
+    },
+    {
+      "id": "V02-slab-edge-250k1",
+      "description": "Old-regime first slab boundary +1 rupee",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 250001,
+            "basicSalary": 0,
+            "hraReceived": 0,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 0
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 0,
+            "ppf": 0,
+            "elss": 0,
+            "nsc": 0,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 0
+          },
+          "section80D": {
+            "selfPremium": 0,
+            "parentsPremium": 0,
+            "preventiveHealthCheckup": 0,
+            "isSelfSenior": false,
+            "isParentsSenior": false
+          },
+          "section80E": {
+            "educationLoanInterest": 0
+          },
+          "section80G": {
+            "donations": 0
+          },
+          "hra": {
+            "rentPaid": 0,
+            "isMetro": false
+          },
+          "section16": {
+            "professionalTax": 0
+          }
+        },
+        "personalInfo": null
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 250001,
+          "incomeBreakdown": {
+            "salary": 250001,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 200001,
+          "slabWiseTax": [
+            {
+              "slab": "Income up to Rs. 2,50,000 — Nil (Finance Bill 2025, Paragraph A(I)(1))",
+              "income": 200001,
+              "rate": 0,
+              "tax": 0
+            }
+          ],
+          "taxBeforeSurcharge": 0,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 0,
+          "cess": 0,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 0,
+          "effectiveTaxRate": 0,
+          "takeHomeIncome": 250001
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 250001,
+          "incomeBreakdown": {
+            "salary": 250001,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 200001,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)",
+              "income": 200001,
+              "rate": 0,
+              "tax": 0
+            }
+          ],
+          "taxBeforeSurcharge": 0,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 0,
+          "cess": 0,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 0,
+          "effectiveTaxRate": 0,
+          "takeHomeIncome": 250001
+        },
+        "recommendedRegime": "old",
+        "savings": 0,
+        "savingsPercentage": 0,
+        "deductionsLost": 0,
+        "analysis": {
+          "oldRegimeBenefits": [],
+          "newRegimeBenefits": [
+            "Simpler filing — fewer deductions to track",
+            "Eligible for full 87A rebate — zero tax"
+          ],
+          "recommendation": "Both regimes result in equal tax. Choose New Regime for simpler filing."
+        }
+      }
+    },
+    {
+      "id": "V03-rebate-450k",
+      "description": "87A zone both regimes — zero tax expected",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 450000,
+            "basicSalary": 0,
+            "hraReceived": 0,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 0
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 0,
+            "ppf": 0,
+            "elss": 0,
+            "nsc": 0,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 0
+          },
+          "section80D": {
+            "selfPremium": 0,
+            "parentsPremium": 0,
+            "preventiveHealthCheckup": 0,
+            "isSelfSenior": false,
+            "isParentsSenior": false
+          },
+          "section80E": {
+            "educationLoanInterest": 0
+          },
+          "section80G": {
+            "donations": 0
+          },
+          "hra": {
+            "rentPaid": 0,
+            "isMetro": false
+          },
+          "section16": {
+            "professionalTax": 0
+          }
+        },
+        "personalInfo": null
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 450000,
+          "incomeBreakdown": {
+            "salary": 450000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 400000,
+          "slabWiseTax": [
+            {
+              "slab": "Income up to Rs. 2,50,000 — Nil (Finance Bill 2025, Paragraph A(I)(1))",
+              "income": 250000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 2,50,000 to Rs. 5,00,000 — 5% (Finance Bill 2025, Paragraph A(I)(2))",
+              "income": 150000,
+              "rate": 5,
+              "tax": 7500
+            }
+          ],
+          "taxBeforeSurcharge": 7500,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 0,
+          "cess": 0,
+          "cessRate": 4,
+          "rebate87A": 7500,
+          "totalTaxLiability": 0,
+          "effectiveTaxRate": 0,
+          "takeHomeIncome": 450000
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 450000,
+          "incomeBreakdown": {
+            "salary": 450000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 400000,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 3,00,000 to Rs. 6,00,000 — 5% (Section 115BAC, AY 2025-26)",
+              "income": 100000,
+              "rate": 5,
+              "tax": 5000
+            }
+          ],
+          "taxBeforeSurcharge": 5000,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 0,
+          "cess": 0,
+          "cessRate": 4,
+          "rebate87A": 5000,
+          "totalTaxLiability": 0,
+          "effectiveTaxRate": 0,
+          "takeHomeIncome": 450000
+        },
+        "recommendedRegime": "old",
+        "savings": 0,
+        "savingsPercentage": 0,
+        "deductionsLost": 0,
+        "analysis": {
+          "oldRegimeBenefits": [
+            "Section 87A rebate: ₹7,500"
+          ],
+          "newRegimeBenefits": [
+            "Section 87A rebate: ₹5,000",
+            "Simpler filing — fewer deductions to track",
+            "Eligible for full 87A rebate — zero tax"
+          ],
+          "recommendation": "Both regimes result in equal tax. Choose New Regime for simpler filing."
+        }
+      }
+    },
+    {
+      "id": "V04-rebate-edge-700k",
+      "description": "New-regime 87A threshold exactly (₹7L taxable pre-SD nuance)",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 700000,
+            "basicSalary": 0,
+            "hraReceived": 0,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 0
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 0,
+            "ppf": 0,
+            "elss": 0,
+            "nsc": 0,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 0
+          },
+          "section80D": {
+            "selfPremium": 0,
+            "parentsPremium": 0,
+            "preventiveHealthCheckup": 0,
+            "isSelfSenior": false,
+            "isParentsSenior": false
+          },
+          "section80E": {
+            "educationLoanInterest": 0
+          },
+          "section80G": {
+            "donations": 0
+          },
+          "hra": {
+            "rentPaid": 0,
+            "isMetro": false
+          },
+          "section16": {
+            "professionalTax": 0
+          }
+        },
+        "personalInfo": null
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 700000,
+          "incomeBreakdown": {
+            "salary": 700000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 650000,
+          "slabWiseTax": [
+            {
+              "slab": "Income up to Rs. 2,50,000 — Nil (Finance Bill 2025, Paragraph A(I)(1))",
+              "income": 250000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 2,50,000 to Rs. 5,00,000 — 5% (Finance Bill 2025, Paragraph A(I)(2))",
+              "income": 250000,
+              "rate": 5,
+              "tax": 12500
+            },
+            {
+              "slab": "Rs. 5,00,000 to Rs. 10,00,000 — 20% (Finance Bill 2025, Paragraph A(I)(3))",
+              "income": 150000,
+              "rate": 20,
+              "tax": 30000
+            }
+          ],
+          "taxBeforeSurcharge": 42500,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 42500,
+          "cess": 1700,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 44200,
+          "effectiveTaxRate": 6.31,
+          "takeHomeIncome": 655800
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 700000,
+          "incomeBreakdown": {
+            "salary": 700000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 650000,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 3,00,000 to Rs. 6,00,000 — 5% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 5,
+              "tax": 15000
+            },
+            {
+              "slab": "Rs. 6,00,000 to Rs. 9,00,000 — 10% (Section 115BAC, AY 2025-26)",
+              "income": 50000,
+              "rate": 10,
+              "tax": 5000
+            }
+          ],
+          "taxBeforeSurcharge": 20000,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 0,
+          "cess": 0,
+          "cessRate": 4,
+          "rebate87A": 20000,
+          "totalTaxLiability": 0,
+          "effectiveTaxRate": 0,
+          "takeHomeIncome": 700000
+        },
+        "recommendedRegime": "new",
+        "savings": 44200,
+        "savingsPercentage": 100,
+        "deductionsLost": 0,
+        "analysis": {
+          "oldRegimeBenefits": [],
+          "newRegimeBenefits": [
+            "Section 87A rebate: ₹20,000",
+            "Lower effective rate: 0.00% vs 6.31%",
+            "Simpler filing — fewer deductions to track",
+            "Eligible for full 87A rebate — zero tax"
+          ],
+          "recommendation": "New Regime saves ₹44,200 (100.0%) with lower slab rates."
+        }
+      }
+    },
+    {
+      "id": "V05-rebate-marginal-760k",
+      "description": "87A marginal-relief zone just past ₹7L taxable",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 760000,
+            "basicSalary": 0,
+            "hraReceived": 0,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 0
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 0,
+            "ppf": 0,
+            "elss": 0,
+            "nsc": 0,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 0
+          },
+          "section80D": {
+            "selfPremium": 0,
+            "parentsPremium": 0,
+            "preventiveHealthCheckup": 0,
+            "isSelfSenior": false,
+            "isParentsSenior": false
+          },
+          "section80E": {
+            "educationLoanInterest": 0
+          },
+          "section80G": {
+            "donations": 0
+          },
+          "hra": {
+            "rentPaid": 0,
+            "isMetro": false
+          },
+          "section16": {
+            "professionalTax": 0
+          }
+        },
+        "personalInfo": null
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 760000,
+          "incomeBreakdown": {
+            "salary": 760000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 710000,
+          "slabWiseTax": [
+            {
+              "slab": "Income up to Rs. 2,50,000 — Nil (Finance Bill 2025, Paragraph A(I)(1))",
+              "income": 250000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 2,50,000 to Rs. 5,00,000 — 5% (Finance Bill 2025, Paragraph A(I)(2))",
+              "income": 250000,
+              "rate": 5,
+              "tax": 12500
+            },
+            {
+              "slab": "Rs. 5,00,000 to Rs. 10,00,000 — 20% (Finance Bill 2025, Paragraph A(I)(3))",
+              "income": 210000,
+              "rate": 20,
+              "tax": 42000
+            }
+          ],
+          "taxBeforeSurcharge": 54500,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 54500,
+          "cess": 2180,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 56680,
+          "effectiveTaxRate": 7.46,
+          "takeHomeIncome": 703320
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 760000,
+          "incomeBreakdown": {
+            "salary": 760000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 710000,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 3,00,000 to Rs. 6,00,000 — 5% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 5,
+              "tax": 15000
+            },
+            {
+              "slab": "Rs. 6,00,000 to Rs. 9,00,000 — 10% (Section 115BAC, AY 2025-26)",
+              "income": 110000,
+              "rate": 10,
+              "tax": 11000
+            }
+          ],
+          "taxBeforeSurcharge": 26000,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 10000,
+          "cess": 400,
+          "cessRate": 4,
+          "rebate87A": 16000,
+          "totalTaxLiability": 10400,
+          "effectiveTaxRate": 1.37,
+          "takeHomeIncome": 749600
+        },
+        "recommendedRegime": "new",
+        "savings": 46280,
+        "savingsPercentage": 81.65,
+        "deductionsLost": 0,
+        "analysis": {
+          "oldRegimeBenefits": [],
+          "newRegimeBenefits": [
+            "Section 87A rebate: ₹16,000",
+            "Lower effective rate: 1.37% vs 7.46%",
+            "Simpler filing — fewer deductions to track"
+          ],
+          "recommendation": "New Regime saves ₹46,280 (81.7%) with lower slab rates."
+        }
+      }
+    },
+    {
+      "id": "V06-mid-1.2M-80C-full",
+      "description": "₹12L salary with 80C fully used (cap check)",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 1200000,
+            "basicSalary": 480000,
+            "hraReceived": 0,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 0
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 0,
+            "ppf": 100000,
+            "elss": 80000,
+            "nsc": 0,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 0
+          },
+          "section80D": {
+            "selfPremium": 0,
+            "parentsPremium": 0,
+            "preventiveHealthCheckup": 0,
+            "isSelfSenior": false,
+            "isParentsSenior": false
+          },
+          "section80E": {
+            "educationLoanInterest": 0
+          },
+          "section80G": {
+            "donations": 0
+          },
+          "hra": {
+            "rentPaid": 0,
+            "isMetro": false
+          },
+          "section16": {
+            "professionalTax": 0
+          }
+        },
+        "personalInfo": null
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 1200000,
+          "incomeBreakdown": {
+            "salary": 1200000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 200000,
+          "deductionBreakdown": {
+            "section80C": 150000,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 1000000,
+          "slabWiseTax": [
+            {
+              "slab": "Income up to Rs. 2,50,000 — Nil (Finance Bill 2025, Paragraph A(I)(1))",
+              "income": 250000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 2,50,000 to Rs. 5,00,000 — 5% (Finance Bill 2025, Paragraph A(I)(2))",
+              "income": 250000,
+              "rate": 5,
+              "tax": 12500
+            },
+            {
+              "slab": "Rs. 5,00,000 to Rs. 10,00,000 — 20% (Finance Bill 2025, Paragraph A(I)(3))",
+              "income": 500000,
+              "rate": 20,
+              "tax": 100000
+            }
+          ],
+          "taxBeforeSurcharge": 112500,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 112500,
+          "cess": 4500,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 117000,
+          "effectiveTaxRate": 9.75,
+          "takeHomeIncome": 1083000
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 1200000,
+          "incomeBreakdown": {
+            "salary": 1200000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 1150000,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 3,00,000 to Rs. 6,00,000 — 5% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 5,
+              "tax": 15000
+            },
+            {
+              "slab": "Rs. 6,00,000 to Rs. 9,00,000 — 10% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 10,
+              "tax": 30000
+            },
+            {
+              "slab": "Rs. 9,00,000 to Rs. 12,00,000 — 15% (Section 115BAC, AY 2025-26)",
+              "income": 250000,
+              "rate": 15,
+              "tax": 37500
+            }
+          ],
+          "taxBeforeSurcharge": 82500,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 82500,
+          "cess": 3300,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 85800,
+          "effectiveTaxRate": 7.15,
+          "takeHomeIncome": 1114200
+        },
+        "recommendedRegime": "new",
+        "savings": 31200,
+        "savingsPercentage": 26.67,
+        "deductionsLost": 150000,
+        "analysis": {
+          "oldRegimeBenefits": [
+            "Deductions of ₹2,00,000 reduce your taxable income",
+            "Section 80C: ₹1,50,000"
+          ],
+          "newRegimeBenefits": [
+            "Lower effective rate: 7.15% vs 9.75%",
+            "Simpler filing — fewer deductions to track"
+          ],
+          "recommendation": "New Regime saves ₹31,200 (26.7%) with lower slab rates."
+        }
+      }
+    },
+    {
+      "id": "V07-hra-metro",
+      "description": "HRA exemption, metro (50% basic rule)",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 1500000,
+            "basicSalary": 600000,
+            "hraReceived": 240000,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 0
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 0,
+            "ppf": 0,
+            "elss": 0,
+            "nsc": 0,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 0
+          },
+          "section80D": {
+            "selfPremium": 0,
+            "parentsPremium": 0,
+            "preventiveHealthCheckup": 0,
+            "isSelfSenior": false,
+            "isParentsSenior": false
+          },
+          "section80E": {
+            "educationLoanInterest": 0
+          },
+          "section80G": {
+            "donations": 0
+          },
+          "hra": {
+            "rentPaid": 300000,
+            "isMetro": true
+          },
+          "section16": {
+            "professionalTax": 0
+          }
+        },
+        "personalInfo": null
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 1740000,
+          "incomeBreakdown": {
+            "salary": 1740000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 290000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 240000,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 1450000,
+          "slabWiseTax": [
+            {
+              "slab": "Income up to Rs. 2,50,000 — Nil (Finance Bill 2025, Paragraph A(I)(1))",
+              "income": 250000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 2,50,000 to Rs. 5,00,000 — 5% (Finance Bill 2025, Paragraph A(I)(2))",
+              "income": 250000,
+              "rate": 5,
+              "tax": 12500
+            },
+            {
+              "slab": "Rs. 5,00,000 to Rs. 10,00,000 — 20% (Finance Bill 2025, Paragraph A(I)(3))",
+              "income": 500000,
+              "rate": 20,
+              "tax": 100000
+            },
+            {
+              "slab": "Above Rs. 10,00,000 — 30% (Finance Bill 2025, Paragraph A(I)(4))",
+              "income": 450000,
+              "rate": 30,
+              "tax": 135000
+            }
+          ],
+          "taxBeforeSurcharge": 247500,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 247500,
+          "cess": 9900,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 257400,
+          "effectiveTaxRate": 14.79,
+          "takeHomeIncome": 1482600
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 1740000,
+          "incomeBreakdown": {
+            "salary": 1740000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 1690000,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 3,00,000 to Rs. 6,00,000 — 5% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 5,
+              "tax": 15000
+            },
+            {
+              "slab": "Rs. 6,00,000 to Rs. 9,00,000 — 10% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 10,
+              "tax": 30000
+            },
+            {
+              "slab": "Rs. 9,00,000 to Rs. 12,00,000 — 15% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 15,
+              "tax": 45000
+            },
+            {
+              "slab": "Rs. 12,00,000 to Rs. 15,00,000 — 20% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 20,
+              "tax": 60000
+            },
+            {
+              "slab": "Above Rs. 15,00,000 — 30% (Section 115BAC, AY 2025-26)",
+              "income": 190000,
+              "rate": 30,
+              "tax": 57000
+            }
+          ],
+          "taxBeforeSurcharge": 207000,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 207000,
+          "cess": 8280,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 215280,
+          "effectiveTaxRate": 12.37,
+          "takeHomeIncome": 1524720
+        },
+        "recommendedRegime": "new",
+        "savings": 42120,
+        "savingsPercentage": 16.36,
+        "deductionsLost": 240000,
+        "analysis": {
+          "oldRegimeBenefits": [
+            "Deductions of ₹2,90,000 reduce your taxable income",
+            "HRA exemption: ₹2,40,000"
+          ],
+          "newRegimeBenefits": [
+            "Lower effective rate: 12.37% vs 14.79%",
+            "Simpler filing — fewer deductions to track"
+          ],
+          "recommendation": "New Regime saves ₹42,120 (16.4%) with lower slab rates."
+        }
+      }
+    },
+    {
+      "id": "V08-hra-nonmetro",
+      "description": "HRA exemption, non-metro (40% basic rule)",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 1500000,
+            "basicSalary": 600000,
+            "hraReceived": 240000,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 0
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 0,
+            "ppf": 0,
+            "elss": 0,
+            "nsc": 0,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 0
+          },
+          "section80D": {
+            "selfPremium": 0,
+            "parentsPremium": 0,
+            "preventiveHealthCheckup": 0,
+            "isSelfSenior": false,
+            "isParentsSenior": false
+          },
+          "section80E": {
+            "educationLoanInterest": 0
+          },
+          "section80G": {
+            "donations": 0
+          },
+          "hra": {
+            "rentPaid": 300000,
+            "isMetro": false
+          },
+          "section16": {
+            "professionalTax": 0
+          }
+        },
+        "personalInfo": null
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 1740000,
+          "incomeBreakdown": {
+            "salary": 1740000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 290000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 240000,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 1450000,
+          "slabWiseTax": [
+            {
+              "slab": "Income up to Rs. 2,50,000 — Nil (Finance Bill 2025, Paragraph A(I)(1))",
+              "income": 250000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 2,50,000 to Rs. 5,00,000 — 5% (Finance Bill 2025, Paragraph A(I)(2))",
+              "income": 250000,
+              "rate": 5,
+              "tax": 12500
+            },
+            {
+              "slab": "Rs. 5,00,000 to Rs. 10,00,000 — 20% (Finance Bill 2025, Paragraph A(I)(3))",
+              "income": 500000,
+              "rate": 20,
+              "tax": 100000
+            },
+            {
+              "slab": "Above Rs. 10,00,000 — 30% (Finance Bill 2025, Paragraph A(I)(4))",
+              "income": 450000,
+              "rate": 30,
+              "tax": 135000
+            }
+          ],
+          "taxBeforeSurcharge": 247500,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 247500,
+          "cess": 9900,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 257400,
+          "effectiveTaxRate": 14.79,
+          "takeHomeIncome": 1482600
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 1740000,
+          "incomeBreakdown": {
+            "salary": 1740000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 1690000,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 3,00,000 to Rs. 6,00,000 — 5% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 5,
+              "tax": 15000
+            },
+            {
+              "slab": "Rs. 6,00,000 to Rs. 9,00,000 — 10% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 10,
+              "tax": 30000
+            },
+            {
+              "slab": "Rs. 9,00,000 to Rs. 12,00,000 — 15% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 15,
+              "tax": 45000
+            },
+            {
+              "slab": "Rs. 12,00,000 to Rs. 15,00,000 — 20% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 20,
+              "tax": 60000
+            },
+            {
+              "slab": "Above Rs. 15,00,000 — 30% (Section 115BAC, AY 2025-26)",
+              "income": 190000,
+              "rate": 30,
+              "tax": 57000
+            }
+          ],
+          "taxBeforeSurcharge": 207000,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 207000,
+          "cess": 8280,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 215280,
+          "effectiveTaxRate": 12.37,
+          "takeHomeIncome": 1524720
+        },
+        "recommendedRegime": "new",
+        "savings": 42120,
+        "savingsPercentage": 16.36,
+        "deductionsLost": 240000,
+        "analysis": {
+          "oldRegimeBenefits": [
+            "Deductions of ₹2,90,000 reduce your taxable income",
+            "HRA exemption: ₹2,40,000"
+          ],
+          "newRegimeBenefits": [
+            "Lower effective rate: 12.37% vs 14.79%",
+            "Simpler filing — fewer deductions to track"
+          ],
+          "recommendation": "New Regime saves ₹42,120 (16.4%) with lower slab rates."
+        }
+      }
+    },
+    {
+      "id": "V09-kitchen-sink-2.5M",
+      "description": "All deduction heads at once (80C cap, 80D senior parents, NPS, 80E, 80G, prof tax)",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 2500000,
+            "basicSalary": 1000000,
+            "hraReceived": 300000,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 2400
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 60000,
+            "ppf": 90000,
+            "elss": 0,
+            "nsc": 30000,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 50000
+          },
+          "section80D": {
+            "selfPremium": 20000,
+            "parentsPremium": 48000,
+            "preventiveHealthCheckup": 5000,
+            "isSelfSenior": false,
+            "isParentsSenior": true
+          },
+          "section80E": {
+            "educationLoanInterest": 35000
+          },
+          "section80G": {
+            "donations": 20000
+          },
+          "hra": {
+            "rentPaid": 360000,
+            "isMetro": true
+          },
+          "section16": {
+            "professionalTax": 2400
+          }
+        },
+        "personalInfo": {
+          "pan": "ABCDE1234F",
+          "name": "Golden Vector",
+          "dateOfBirth": "1986-01-01",
+          "age": 40,
+          "isSeniorCitizen": false,
+          "isSuperSeniorCitizen": false,
+          "residentialStatus": "resident"
+        }
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 2800000,
+          "incomeBreakdown": {
+            "salary": 2800000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 630400,
+          "deductionBreakdown": {
+            "section80C": 150000,
+            "section80CCD1B": 50000,
+            "section80D": 73000,
+            "section80E": 35000,
+            "section80G": 10000,
+            "hra": 260000,
+            "standardDeduction": 50000,
+            "professionalTax": 2400
+          },
+          "taxableIncome": 2169600,
+          "slabWiseTax": [
+            {
+              "slab": "Income up to Rs. 2,50,000 — Nil (Finance Bill 2025, Paragraph A(I)(1))",
+              "income": 250000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 2,50,000 to Rs. 5,00,000 — 5% (Finance Bill 2025, Paragraph A(I)(2))",
+              "income": 250000,
+              "rate": 5,
+              "tax": 12500
+            },
+            {
+              "slab": "Rs. 5,00,000 to Rs. 10,00,000 — 20% (Finance Bill 2025, Paragraph A(I)(3))",
+              "income": 500000,
+              "rate": 20,
+              "tax": 100000
+            },
+            {
+              "slab": "Above Rs. 10,00,000 — 30% (Finance Bill 2025, Paragraph A(I)(4))",
+              "income": 1169600,
+              "rate": 30,
+              "tax": 350880
+            }
+          ],
+          "taxBeforeSurcharge": 463380,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 463380,
+          "cess": 18535,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 481915,
+          "effectiveTaxRate": 17.21,
+          "takeHomeIncome": 2318085
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 2800000,
+          "incomeBreakdown": {
+            "salary": 2800000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 52400,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 2400
+          },
+          "taxableIncome": 2747600,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 3,00,000 to Rs. 6,00,000 — 5% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 5,
+              "tax": 15000
+            },
+            {
+              "slab": "Rs. 6,00,000 to Rs. 9,00,000 — 10% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 10,
+              "tax": 30000
+            },
+            {
+              "slab": "Rs. 9,00,000 to Rs. 12,00,000 — 15% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 15,
+              "tax": 45000
+            },
+            {
+              "slab": "Rs. 12,00,000 to Rs. 15,00,000 — 20% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 20,
+              "tax": 60000
+            },
+            {
+              "slab": "Above Rs. 15,00,000 — 30% (Section 115BAC, AY 2025-26)",
+              "income": 1247600,
+              "rate": 30,
+              "tax": 374280
+            }
+          ],
+          "taxBeforeSurcharge": 524280,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 524280,
+          "cess": 20971,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 545251,
+          "effectiveTaxRate": 19.47,
+          "takeHomeIncome": 2254749
+        },
+        "recommendedRegime": "old",
+        "savings": 63336,
+        "savingsPercentage": 11.62,
+        "deductionsLost": 578000,
+        "analysis": {
+          "oldRegimeBenefits": [
+            "Deductions of ₹6,30,400 reduce your taxable income",
+            "Section 80C: ₹1,50,000",
+            "HRA exemption: ₹2,60,000",
+            "Health insurance (80D): ₹73,000"
+          ],
+          "newRegimeBenefits": [
+            "Simpler filing — fewer deductions to track"
+          ],
+          "recommendation": "Old Regime saves ₹63,336 (11.6%) by using your deductions."
+        }
+      }
+    },
+    {
+      "id": "V10-surcharge-5.05M",
+      "description": "Surcharge 10% band + marginal relief zone",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 5050000,
+            "basicSalary": 0,
+            "hraReceived": 0,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 0
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 0,
+            "ppf": 0,
+            "elss": 0,
+            "nsc": 0,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 0
+          },
+          "section80D": {
+            "selfPremium": 0,
+            "parentsPremium": 0,
+            "preventiveHealthCheckup": 0,
+            "isSelfSenior": false,
+            "isParentsSenior": false
+          },
+          "section80E": {
+            "educationLoanInterest": 0
+          },
+          "section80G": {
+            "donations": 0
+          },
+          "hra": {
+            "rentPaid": 0,
+            "isMetro": false
+          },
+          "section16": {
+            "professionalTax": 0
+          }
+        },
+        "personalInfo": null
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 5050000,
+          "incomeBreakdown": {
+            "salary": 5050000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 5000000,
+          "slabWiseTax": [
+            {
+              "slab": "Income up to Rs. 2,50,000 — Nil (Finance Bill 2025, Paragraph A(I)(1))",
+              "income": 250000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 2,50,000 to Rs. 5,00,000 — 5% (Finance Bill 2025, Paragraph A(I)(2))",
+              "income": 250000,
+              "rate": 5,
+              "tax": 12500
+            },
+            {
+              "slab": "Rs. 5,00,000 to Rs. 10,00,000 — 20% (Finance Bill 2025, Paragraph A(I)(3))",
+              "income": 500000,
+              "rate": 20,
+              "tax": 100000
+            },
+            {
+              "slab": "Above Rs. 10,00,000 — 30% (Finance Bill 2025, Paragraph A(I)(4))",
+              "income": 4000000,
+              "rate": 30,
+              "tax": 1200000
+            }
+          ],
+          "taxBeforeSurcharge": 1312500,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 1312500,
+          "cess": 52500,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 1365000,
+          "effectiveTaxRate": 27.03,
+          "takeHomeIncome": 3685000
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 5050000,
+          "incomeBreakdown": {
+            "salary": 5050000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 5000000,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 3,00,000 to Rs. 6,00,000 — 5% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 5,
+              "tax": 15000
+            },
+            {
+              "slab": "Rs. 6,00,000 to Rs. 9,00,000 — 10% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 10,
+              "tax": 30000
+            },
+            {
+              "slab": "Rs. 9,00,000 to Rs. 12,00,000 — 15% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 15,
+              "tax": 45000
+            },
+            {
+              "slab": "Rs. 12,00,000 to Rs. 15,00,000 — 20% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 20,
+              "tax": 60000
+            },
+            {
+              "slab": "Above Rs. 15,00,000 — 30% (Section 115BAC, AY 2025-26)",
+              "income": 3500000,
+              "rate": 30,
+              "tax": 1050000
+            }
+          ],
+          "taxBeforeSurcharge": 1200000,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 1200000,
+          "cess": 48000,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 1248000,
+          "effectiveTaxRate": 24.71,
+          "takeHomeIncome": 3802000
+        },
+        "recommendedRegime": "new",
+        "savings": 117000,
+        "savingsPercentage": 8.57,
+        "deductionsLost": 0,
+        "analysis": {
+          "oldRegimeBenefits": [],
+          "newRegimeBenefits": [
+            "Lower effective rate: 24.71% vs 27.03%",
+            "Simpler filing — fewer deductions to track"
+          ],
+          "recommendation": "New Regime saves ₹1,17,000 (8.6%) with lower slab rates."
+        }
+      }
+    },
+    {
+      "id": "V11-surcharge-10.1M",
+      "description": "Surcharge 15% band boundary",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 10100000,
+            "basicSalary": 0,
+            "hraReceived": 0,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 0
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 0,
+            "ppf": 0,
+            "elss": 0,
+            "nsc": 0,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 0
+          },
+          "section80D": {
+            "selfPremium": 0,
+            "parentsPremium": 0,
+            "preventiveHealthCheckup": 0,
+            "isSelfSenior": false,
+            "isParentsSenior": false
+          },
+          "section80E": {
+            "educationLoanInterest": 0
+          },
+          "section80G": {
+            "donations": 0
+          },
+          "hra": {
+            "rentPaid": 0,
+            "isMetro": false
+          },
+          "section16": {
+            "professionalTax": 0
+          }
+        },
+        "personalInfo": null
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 10100000,
+          "incomeBreakdown": {
+            "salary": 10100000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 10050000,
+          "slabWiseTax": [
+            {
+              "slab": "Income up to Rs. 2,50,000 — Nil (Finance Bill 2025, Paragraph A(I)(1))",
+              "income": 250000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 2,50,000 to Rs. 5,00,000 — 5% (Finance Bill 2025, Paragraph A(I)(2))",
+              "income": 250000,
+              "rate": 5,
+              "tax": 12500
+            },
+            {
+              "slab": "Rs. 5,00,000 to Rs. 10,00,000 — 20% (Finance Bill 2025, Paragraph A(I)(3))",
+              "income": 500000,
+              "rate": 20,
+              "tax": 100000
+            },
+            {
+              "slab": "Above Rs. 10,00,000 — 30% (Finance Bill 2025, Paragraph A(I)(4))",
+              "income": 9050000,
+              "rate": 30,
+              "tax": 2715000
+            }
+          ],
+          "taxBeforeSurcharge": 2827500,
+          "surcharge": 316250,
+          "surchargeRate": 15,
+          "taxAfterSurcharge": 3143750,
+          "cess": 125750,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 3269500,
+          "effectiveTaxRate": 32.37,
+          "takeHomeIncome": 6830500
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 10100000,
+          "incomeBreakdown": {
+            "salary": 10100000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 10050000,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 3,00,000 to Rs. 6,00,000 — 5% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 5,
+              "tax": 15000
+            },
+            {
+              "slab": "Rs. 6,00,000 to Rs. 9,00,000 — 10% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 10,
+              "tax": 30000
+            },
+            {
+              "slab": "Rs. 9,00,000 to Rs. 12,00,000 — 15% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 15,
+              "tax": 45000
+            },
+            {
+              "slab": "Rs. 12,00,000 to Rs. 15,00,000 — 20% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 20,
+              "tax": 60000
+            },
+            {
+              "slab": "Above Rs. 15,00,000 — 30% (Section 115BAC, AY 2025-26)",
+              "income": 8550000,
+              "rate": 30,
+              "tax": 2565000
+            }
+          ],
+          "taxBeforeSurcharge": 2715000,
+          "surcharge": 305000,
+          "surchargeRate": 15,
+          "taxAfterSurcharge": 3020000,
+          "cess": 120800,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 3140800,
+          "effectiveTaxRate": 31.1,
+          "takeHomeIncome": 6959200
+        },
+        "recommendedRegime": "new",
+        "savings": 128700,
+        "savingsPercentage": 3.94,
+        "deductionsLost": 0,
+        "analysis": {
+          "oldRegimeBenefits": [],
+          "newRegimeBenefits": [
+            "Lower effective rate: 31.10% vs 32.37%",
+            "Simpler filing — fewer deductions to track"
+          ],
+          "recommendation": "New Regime saves ₹1,28,700 (3.9%) with lower slab rates."
+        }
+      }
+    },
+    {
+      "id": "V12-surcharge-20.1M",
+      "description": "Surcharge 25% band boundary",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 20100000,
+            "basicSalary": 0,
+            "hraReceived": 0,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 0
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 0,
+            "ppf": 0,
+            "elss": 0,
+            "nsc": 0,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 0
+          },
+          "section80D": {
+            "selfPremium": 0,
+            "parentsPremium": 0,
+            "preventiveHealthCheckup": 0,
+            "isSelfSenior": false,
+            "isParentsSenior": false
+          },
+          "section80E": {
+            "educationLoanInterest": 0
+          },
+          "section80G": {
+            "donations": 0
+          },
+          "hra": {
+            "rentPaid": 0,
+            "isMetro": false
+          },
+          "section16": {
+            "professionalTax": 0
+          }
+        },
+        "personalInfo": null
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 20100000,
+          "incomeBreakdown": {
+            "salary": 20100000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 20050000,
+          "slabWiseTax": [
+            {
+              "slab": "Income up to Rs. 2,50,000 — Nil (Finance Bill 2025, Paragraph A(I)(1))",
+              "income": 250000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 2,50,000 to Rs. 5,00,000 — 5% (Finance Bill 2025, Paragraph A(I)(2))",
+              "income": 250000,
+              "rate": 5,
+              "tax": 12500
+            },
+            {
+              "slab": "Rs. 5,00,000 to Rs. 10,00,000 — 20% (Finance Bill 2025, Paragraph A(I)(3))",
+              "income": 500000,
+              "rate": 20,
+              "tax": 100000
+            },
+            {
+              "slab": "Above Rs. 10,00,000 — 30% (Finance Bill 2025, Paragraph A(I)(4))",
+              "income": 19050000,
+              "rate": 30,
+              "tax": 5715000
+            }
+          ],
+          "taxBeforeSurcharge": 5827500,
+          "surcharge": 906875,
+          "surchargeRate": 25,
+          "taxAfterSurcharge": 6734375,
+          "cess": 269375,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 7003750,
+          "effectiveTaxRate": 34.84,
+          "takeHomeIncome": 13096250
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 20100000,
+          "incomeBreakdown": {
+            "salary": 20100000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 20050000,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 3,00,000 to Rs. 6,00,000 — 5% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 5,
+              "tax": 15000
+            },
+            {
+              "slab": "Rs. 6,00,000 to Rs. 9,00,000 — 10% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 10,
+              "tax": 30000
+            },
+            {
+              "slab": "Rs. 9,00,000 to Rs. 12,00,000 — 15% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 15,
+              "tax": 45000
+            },
+            {
+              "slab": "Rs. 12,00,000 to Rs. 15,00,000 — 20% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 20,
+              "tax": 60000
+            },
+            {
+              "slab": "Above Rs. 15,00,000 — 30% (Section 115BAC, AY 2025-26)",
+              "income": 18550000,
+              "rate": 30,
+              "tax": 5565000
+            }
+          ],
+          "taxBeforeSurcharge": 5715000,
+          "surcharge": 890000,
+          "surchargeRate": 25,
+          "taxAfterSurcharge": 6605000,
+          "cess": 264200,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 6869200,
+          "effectiveTaxRate": 34.18,
+          "takeHomeIncome": 13230800
+        },
+        "recommendedRegime": "new",
+        "savings": 134550,
+        "savingsPercentage": 1.92,
+        "deductionsLost": 0,
+        "analysis": {
+          "oldRegimeBenefits": [],
+          "newRegimeBenefits": [
+            "Lower effective rate: 34.18% vs 34.84%",
+            "Simpler filing — fewer deductions to track"
+          ],
+          "recommendation": "New Regime saves ₹1,34,550 (1.9%) with lower slab rates."
+        }
+      }
+    },
+    {
+      "id": "V13-surcharge-50.1M",
+      "description": "Surcharge 37% band boundary",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 50100000,
+            "basicSalary": 0,
+            "hraReceived": 0,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 0
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 0,
+            "ppf": 0,
+            "elss": 0,
+            "nsc": 0,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 0
+          },
+          "section80D": {
+            "selfPremium": 0,
+            "parentsPremium": 0,
+            "preventiveHealthCheckup": 0,
+            "isSelfSenior": false,
+            "isParentsSenior": false
+          },
+          "section80E": {
+            "educationLoanInterest": 0
+          },
+          "section80G": {
+            "donations": 0
+          },
+          "hra": {
+            "rentPaid": 0,
+            "isMetro": false
+          },
+          "section16": {
+            "professionalTax": 0
+          }
+        },
+        "personalInfo": null
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 50100000,
+          "incomeBreakdown": {
+            "salary": 50100000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 50050000,
+          "slabWiseTax": [
+            {
+              "slab": "Income up to Rs. 2,50,000 — Nil (Finance Bill 2025, Paragraph A(I)(1))",
+              "income": 250000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 2,50,000 to Rs. 5,00,000 — 5% (Finance Bill 2025, Paragraph A(I)(2))",
+              "income": 250000,
+              "rate": 5,
+              "tax": 12500
+            },
+            {
+              "slab": "Rs. 5,00,000 to Rs. 10,00,000 — 20% (Finance Bill 2025, Paragraph A(I)(3))",
+              "income": 500000,
+              "rate": 20,
+              "tax": 100000
+            },
+            {
+              "slab": "Above Rs. 10,00,000 — 30% (Finance Bill 2025, Paragraph A(I)(4))",
+              "income": 49050000,
+              "rate": 30,
+              "tax": 14715000
+            }
+          ],
+          "taxBeforeSurcharge": 14827500,
+          "surcharge": 3738125,
+          "surchargeRate": 37,
+          "taxAfterSurcharge": 18565625,
+          "cess": 742625,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 19308250,
+          "effectiveTaxRate": 38.54,
+          "takeHomeIncome": 30791750
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 50100000,
+          "incomeBreakdown": {
+            "salary": 50100000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 50050000,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 3,00,000 to Rs. 6,00,000 — 5% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 5,
+              "tax": 15000
+            },
+            {
+              "slab": "Rs. 6,00,000 to Rs. 9,00,000 — 10% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 10,
+              "tax": 30000
+            },
+            {
+              "slab": "Rs. 9,00,000 to Rs. 12,00,000 — 15% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 15,
+              "tax": 45000
+            },
+            {
+              "slab": "Rs. 12,00,000 to Rs. 15,00,000 — 20% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 20,
+              "tax": 60000
+            },
+            {
+              "slab": "Above Rs. 15,00,000 — 30% (Section 115BAC, AY 2025-26)",
+              "income": 48550000,
+              "rate": 30,
+              "tax": 14565000
+            }
+          ],
+          "taxBeforeSurcharge": 14715000,
+          "surcharge": 3710000,
+          "surchargeRate": 37,
+          "taxAfterSurcharge": 18425000,
+          "cess": 737000,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 19162000,
+          "effectiveTaxRate": 38.25,
+          "takeHomeIncome": 30938000
+        },
+        "recommendedRegime": "new",
+        "savings": 146250,
+        "savingsPercentage": 0.76,
+        "deductionsLost": 0,
+        "analysis": {
+          "oldRegimeBenefits": [],
+          "newRegimeBenefits": [
+            "Lower effective rate: 38.25% vs 38.54%",
+            "Simpler filing — fewer deductions to track"
+          ],
+          "recommendation": "New Regime saves ₹1,46,250 (0.8%) with lower slab rates."
+        }
+      }
+    },
+    {
+      "id": "V14-senior-65",
+      "description": "Senior citizen — Paragraph A(II) slabs (old regime ₹3L nil)",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 800000,
+            "basicSalary": 0,
+            "hraReceived": 0,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 0
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 0,
+            "ppf": 0,
+            "elss": 0,
+            "nsc": 0,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 0
+          },
+          "section80D": {
+            "selfPremium": 0,
+            "parentsPremium": 0,
+            "preventiveHealthCheckup": 0,
+            "isSelfSenior": false,
+            "isParentsSenior": false
+          },
+          "section80E": {
+            "educationLoanInterest": 0
+          },
+          "section80G": {
+            "donations": 0
+          },
+          "hra": {
+            "rentPaid": 0,
+            "isMetro": false
+          },
+          "section16": {
+            "professionalTax": 0
+          }
+        },
+        "personalInfo": {
+          "pan": "ABCDE1234F",
+          "name": "Golden Vector",
+          "dateOfBirth": "1961-01-01",
+          "age": 65,
+          "isSeniorCitizen": true,
+          "isSuperSeniorCitizen": false,
+          "residentialStatus": "resident"
+        }
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 800000,
+          "incomeBreakdown": {
+            "salary": 800000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 750000,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Resident 60-79, Finance Bill 2025, Paragraph A(II))",
+              "income": 300000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 3,00,000 to Rs. 5,00,000 — 5%",
+              "income": 200000,
+              "rate": 5,
+              "tax": 10000
+            },
+            {
+              "slab": "Rs. 5,00,000 to Rs. 10,00,000 — 20%",
+              "income": 250000,
+              "rate": 20,
+              "tax": 50000
+            }
+          ],
+          "taxBeforeSurcharge": 60000,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 60000,
+          "cess": 2400,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 62400,
+          "effectiveTaxRate": 7.8,
+          "takeHomeIncome": 737600
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 800000,
+          "incomeBreakdown": {
+            "salary": 800000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 750000,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 3,00,000 to Rs. 6,00,000 — 5% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 5,
+              "tax": 15000
+            },
+            {
+              "slab": "Rs. 6,00,000 to Rs. 9,00,000 — 10% (Section 115BAC, AY 2025-26)",
+              "income": 150000,
+              "rate": 10,
+              "tax": 15000
+            }
+          ],
+          "taxBeforeSurcharge": 30000,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 30000,
+          "cess": 1200,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 31200,
+          "effectiveTaxRate": 3.9,
+          "takeHomeIncome": 768800
+        },
+        "recommendedRegime": "new",
+        "savings": 31200,
+        "savingsPercentage": 50,
+        "deductionsLost": 0,
+        "analysis": {
+          "oldRegimeBenefits": [],
+          "newRegimeBenefits": [
+            "Lower effective rate: 3.90% vs 7.80%",
+            "Simpler filing — fewer deductions to track"
+          ],
+          "recommendation": "New Regime saves ₹31,200 (50.0%) with lower slab rates."
+        }
+      }
+    },
+    {
+      "id": "V15-super-senior-85",
+      "description": "Super senior — Paragraph A(III) slabs (old regime ₹5L nil)",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 800000,
+            "basicSalary": 0,
+            "hraReceived": 0,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 0
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 0,
+            "ppf": 0,
+            "elss": 0,
+            "nsc": 0,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 0
+          },
+          "section80D": {
+            "selfPremium": 0,
+            "parentsPremium": 0,
+            "preventiveHealthCheckup": 0,
+            "isSelfSenior": false,
+            "isParentsSenior": false
+          },
+          "section80E": {
+            "educationLoanInterest": 0
+          },
+          "section80G": {
+            "donations": 0
+          },
+          "hra": {
+            "rentPaid": 0,
+            "isMetro": false
+          },
+          "section16": {
+            "professionalTax": 0
+          }
+        },
+        "personalInfo": {
+          "pan": "ABCDE1234F",
+          "name": "Golden Vector",
+          "dateOfBirth": "1941-01-01",
+          "age": 85,
+          "isSeniorCitizen": true,
+          "isSuperSeniorCitizen": true,
+          "residentialStatus": "resident"
+        }
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 800000,
+          "incomeBreakdown": {
+            "salary": 800000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 750000,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 5,00,000 — Nil (Resident 80+, Finance Bill 2025, Paragraph A(III))",
+              "income": 500000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 5,00,000 to Rs. 10,00,000 — 20%",
+              "income": 250000,
+              "rate": 20,
+              "tax": 50000
+            }
+          ],
+          "taxBeforeSurcharge": 50000,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 50000,
+          "cess": 2000,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 52000,
+          "effectiveTaxRate": 6.5,
+          "takeHomeIncome": 748000
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 800000,
+          "incomeBreakdown": {
+            "salary": 800000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 750000,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 3,00,000 to Rs. 6,00,000 — 5% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 5,
+              "tax": 15000
+            },
+            {
+              "slab": "Rs. 6,00,000 to Rs. 9,00,000 — 10% (Section 115BAC, AY 2025-26)",
+              "income": 150000,
+              "rate": 10,
+              "tax": 15000
+            }
+          ],
+          "taxBeforeSurcharge": 30000,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 30000,
+          "cess": 1200,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 31200,
+          "effectiveTaxRate": 3.9,
+          "takeHomeIncome": 768800
+        },
+        "recommendedRegime": "new",
+        "savings": 20800,
+        "savingsPercentage": 40,
+        "deductionsLost": 0,
+        "analysis": {
+          "oldRegimeBenefits": [],
+          "newRegimeBenefits": [
+            "Lower effective rate: 3.90% vs 6.50%",
+            "Simpler filing — fewer deductions to track"
+          ],
+          "recommendation": "New Regime saves ₹20,800 (40.0%) with lower slab rates."
+        }
+      }
+    },
+    {
+      "id": "V16-44ad-digital-1Cr",
+      "description": "44AD presumptive, digital receipts ₹1Cr (6%)",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 0,
+            "basicSalary": 0,
+            "hraReceived": 0,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 0
+          },
+          "businessIncome": {
+            "grossReceipts": 10000000,
+            "digitalReceipts": 10000000,
+            "cashReceipts": 0,
+            "expenses": 0
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 0,
+            "ppf": 0,
+            "elss": 0,
+            "nsc": 0,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 0
+          },
+          "section80D": {
+            "selfPremium": 0,
+            "parentsPremium": 0,
+            "preventiveHealthCheckup": 0,
+            "isSelfSenior": false,
+            "isParentsSenior": false
+          },
+          "section80E": {
+            "educationLoanInterest": 0
+          },
+          "section80G": {
+            "donations": 0
+          },
+          "hra": {
+            "rentPaid": 0,
+            "isMetro": false
+          },
+          "section16": {
+            "professionalTax": 0
+          }
+        },
+        "personalInfo": null
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 600000,
+          "incomeBreakdown": {
+            "salary": 0,
+            "houseProperty": 0,
+            "businessIncome": 600000,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 550000,
+          "slabWiseTax": [
+            {
+              "slab": "Income up to Rs. 2,50,000 — Nil (Finance Bill 2025, Paragraph A(I)(1))",
+              "income": 250000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 2,50,000 to Rs. 5,00,000 — 5% (Finance Bill 2025, Paragraph A(I)(2))",
+              "income": 250000,
+              "rate": 5,
+              "tax": 12500
+            },
+            {
+              "slab": "Rs. 5,00,000 to Rs. 10,00,000 — 20% (Finance Bill 2025, Paragraph A(I)(3))",
+              "income": 50000,
+              "rate": 20,
+              "tax": 10000
+            }
+          ],
+          "taxBeforeSurcharge": 22500,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 22500,
+          "cess": 900,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 23400,
+          "effectiveTaxRate": 3.9,
+          "takeHomeIncome": 576600
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 600000,
+          "incomeBreakdown": {
+            "salary": 0,
+            "houseProperty": 0,
+            "businessIncome": 600000,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 550000,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 3,00,000 to Rs. 6,00,000 — 5% (Section 115BAC, AY 2025-26)",
+              "income": 250000,
+              "rate": 5,
+              "tax": 12500
+            }
+          ],
+          "taxBeforeSurcharge": 12500,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 0,
+          "cess": 0,
+          "cessRate": 4,
+          "rebate87A": 12500,
+          "totalTaxLiability": 0,
+          "effectiveTaxRate": 0,
+          "takeHomeIncome": 600000
+        },
+        "recommendedRegime": "new",
+        "savings": 23400,
+        "savingsPercentage": 100,
+        "deductionsLost": 0,
+        "analysis": {
+          "oldRegimeBenefits": [],
+          "newRegimeBenefits": [
+            "Section 87A rebate: ₹12,500",
+            "Lower effective rate: 0.00% vs 3.90%",
+            "Simpler filing — fewer deductions to track",
+            "Eligible for full 87A rebate — zero tax"
+          ],
+          "recommendation": "New Regime saves ₹23,400 (100.0%) with lower slab rates."
+        }
+      }
+    },
+    {
+      "id": "V17-44ad-mixed-1.5Cr",
+      "description": "44AD mixed digital+cash (6% + 8% split)",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 0,
+            "basicSalary": 0,
+            "hraReceived": 0,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 0
+          },
+          "businessIncome": {
+            "grossReceipts": 15000000,
+            "digitalReceipts": 12000000,
+            "cashReceipts": 3000000,
+            "expenses": 0
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 0,
+            "ppf": 0,
+            "elss": 0,
+            "nsc": 0,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 0
+          },
+          "section80D": {
+            "selfPremium": 0,
+            "parentsPremium": 0,
+            "preventiveHealthCheckup": 0,
+            "isSelfSenior": false,
+            "isParentsSenior": false
+          },
+          "section80E": {
+            "educationLoanInterest": 0
+          },
+          "section80G": {
+            "donations": 0
+          },
+          "hra": {
+            "rentPaid": 0,
+            "isMetro": false
+          },
+          "section16": {
+            "professionalTax": 0
+          }
+        },
+        "personalInfo": null
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 960000,
+          "incomeBreakdown": {
+            "salary": 0,
+            "houseProperty": 0,
+            "businessIncome": 960000,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 910000,
+          "slabWiseTax": [
+            {
+              "slab": "Income up to Rs. 2,50,000 — Nil (Finance Bill 2025, Paragraph A(I)(1))",
+              "income": 250000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 2,50,000 to Rs. 5,00,000 — 5% (Finance Bill 2025, Paragraph A(I)(2))",
+              "income": 250000,
+              "rate": 5,
+              "tax": 12500
+            },
+            {
+              "slab": "Rs. 5,00,000 to Rs. 10,00,000 — 20% (Finance Bill 2025, Paragraph A(I)(3))",
+              "income": 410000,
+              "rate": 20,
+              "tax": 82000
+            }
+          ],
+          "taxBeforeSurcharge": 94500,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 94500,
+          "cess": 3780,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 98280,
+          "effectiveTaxRate": 10.24,
+          "takeHomeIncome": 861720
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 960000,
+          "incomeBreakdown": {
+            "salary": 0,
+            "houseProperty": 0,
+            "businessIncome": 960000,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 910000,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 3,00,000 to Rs. 6,00,000 — 5% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 5,
+              "tax": 15000
+            },
+            {
+              "slab": "Rs. 6,00,000 to Rs. 9,00,000 — 10% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 10,
+              "tax": 30000
+            },
+            {
+              "slab": "Rs. 9,00,000 to Rs. 12,00,000 — 15% (Section 115BAC, AY 2025-26)",
+              "income": 10000,
+              "rate": 15,
+              "tax": 1500
+            }
+          ],
+          "taxBeforeSurcharge": 46500,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 46500,
+          "cess": 1860,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 48360,
+          "effectiveTaxRate": 5.04,
+          "takeHomeIncome": 911640
+        },
+        "recommendedRegime": "new",
+        "savings": 49920,
+        "savingsPercentage": 50.79,
+        "deductionsLost": 0,
+        "analysis": {
+          "oldRegimeBenefits": [],
+          "newRegimeBenefits": [
+            "Lower effective rate: 5.04% vs 10.24%",
+            "Simpler filing — fewer deductions to track"
+          ],
+          "recommendation": "New Regime saves ₹49,920 (50.8%) with lower slab rates."
+        }
+      }
+    },
+    {
+      "id": "V18-44ad-enhanced-2.5Cr-digital",
+      "description": "44AD enhanced ₹3Cr threshold — 2.5Cr fully digital (cash ≤5%)",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 0,
+            "basicSalary": 0,
+            "hraReceived": 0,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 0
+          },
+          "businessIncome": {
+            "grossReceipts": 25000000,
+            "digitalReceipts": 25000000,
+            "cashReceipts": 0,
+            "expenses": 0
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 0,
+            "ppf": 0,
+            "elss": 0,
+            "nsc": 0,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 0
+          },
+          "section80D": {
+            "selfPremium": 0,
+            "parentsPremium": 0,
+            "preventiveHealthCheckup": 0,
+            "isSelfSenior": false,
+            "isParentsSenior": false
+          },
+          "section80E": {
+            "educationLoanInterest": 0
+          },
+          "section80G": {
+            "donations": 0
+          },
+          "hra": {
+            "rentPaid": 0,
+            "isMetro": false
+          },
+          "section16": {
+            "professionalTax": 0
+          }
+        },
+        "personalInfo": null
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 1500000,
+          "incomeBreakdown": {
+            "salary": 0,
+            "houseProperty": 0,
+            "businessIncome": 1500000,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 1450000,
+          "slabWiseTax": [
+            {
+              "slab": "Income up to Rs. 2,50,000 — Nil (Finance Bill 2025, Paragraph A(I)(1))",
+              "income": 250000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 2,50,000 to Rs. 5,00,000 — 5% (Finance Bill 2025, Paragraph A(I)(2))",
+              "income": 250000,
+              "rate": 5,
+              "tax": 12500
+            },
+            {
+              "slab": "Rs. 5,00,000 to Rs. 10,00,000 — 20% (Finance Bill 2025, Paragraph A(I)(3))",
+              "income": 500000,
+              "rate": 20,
+              "tax": 100000
+            },
+            {
+              "slab": "Above Rs. 10,00,000 — 30% (Finance Bill 2025, Paragraph A(I)(4))",
+              "income": 450000,
+              "rate": 30,
+              "tax": 135000
+            }
+          ],
+          "taxBeforeSurcharge": 247500,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 247500,
+          "cess": 9900,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 257400,
+          "effectiveTaxRate": 17.16,
+          "takeHomeIncome": 1242600
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 1500000,
+          "incomeBreakdown": {
+            "salary": 0,
+            "houseProperty": 0,
+            "businessIncome": 1500000,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 1450000,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 3,00,000 to Rs. 6,00,000 — 5% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 5,
+              "tax": 15000
+            },
+            {
+              "slab": "Rs. 6,00,000 to Rs. 9,00,000 — 10% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 10,
+              "tax": 30000
+            },
+            {
+              "slab": "Rs. 9,00,000 to Rs. 12,00,000 — 15% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 15,
+              "tax": 45000
+            },
+            {
+              "slab": "Rs. 12,00,000 to Rs. 15,00,000 — 20% (Section 115BAC, AY 2025-26)",
+              "income": 250000,
+              "rate": 20,
+              "tax": 50000
+            }
+          ],
+          "taxBeforeSurcharge": 140000,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 140000,
+          "cess": 5600,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 145600,
+          "effectiveTaxRate": 9.71,
+          "takeHomeIncome": 1354400
+        },
+        "recommendedRegime": "new",
+        "savings": 111800,
+        "savingsPercentage": 43.43,
+        "deductionsLost": 0,
+        "analysis": {
+          "oldRegimeBenefits": [],
+          "newRegimeBenefits": [
+            "Lower effective rate: 9.71% vs 17.16%",
+            "Simpler filing — fewer deductions to track"
+          ],
+          "recommendation": "New Regime saves ₹1,11,800 (43.4%) with lower slab rates."
+        }
+      }
+    },
+    {
+      "id": "V19-44ad-cashheavy-2.5Cr",
+      "description": "2.5Cr with cash >5% — above the ₹2Cr basic threshold",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 0,
+            "basicSalary": 0,
+            "hraReceived": 0,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 0
+          },
+          "businessIncome": {
+            "grossReceipts": 25000000,
+            "digitalReceipts": 20000000,
+            "cashReceipts": 5000000,
+            "expenses": 3000000
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 0,
+            "ppf": 0,
+            "elss": 0,
+            "nsc": 0,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 0
+          },
+          "section80D": {
+            "selfPremium": 0,
+            "parentsPremium": 0,
+            "preventiveHealthCheckup": 0,
+            "isSelfSenior": false,
+            "isParentsSenior": false
+          },
+          "section80E": {
+            "educationLoanInterest": 0
+          },
+          "section80G": {
+            "donations": 0
+          },
+          "hra": {
+            "rentPaid": 0,
+            "isMetro": false
+          },
+          "section16": {
+            "professionalTax": 0
+          }
+        },
+        "personalInfo": null
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 22000000,
+          "incomeBreakdown": {
+            "salary": 0,
+            "houseProperty": 0,
+            "businessIncome": 22000000,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 21950000,
+          "slabWiseTax": [
+            {
+              "slab": "Income up to Rs. 2,50,000 — Nil (Finance Bill 2025, Paragraph A(I)(1))",
+              "income": 250000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 2,50,000 to Rs. 5,00,000 — 5% (Finance Bill 2025, Paragraph A(I)(2))",
+              "income": 250000,
+              "rate": 5,
+              "tax": 12500
+            },
+            {
+              "slab": "Rs. 5,00,000 to Rs. 10,00,000 — 20% (Finance Bill 2025, Paragraph A(I)(3))",
+              "income": 500000,
+              "rate": 20,
+              "tax": 100000
+            },
+            {
+              "slab": "Above Rs. 10,00,000 — 30% (Finance Bill 2025, Paragraph A(I)(4))",
+              "income": 20950000,
+              "rate": 30,
+              "tax": 6285000
+            }
+          ],
+          "taxBeforeSurcharge": 6397500,
+          "surcharge": 1599375,
+          "surchargeRate": 25,
+          "taxAfterSurcharge": 7996875,
+          "cess": 319875,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 8316750,
+          "effectiveTaxRate": 37.8,
+          "takeHomeIncome": 13683250
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 22000000,
+          "incomeBreakdown": {
+            "salary": 0,
+            "houseProperty": 0,
+            "businessIncome": 22000000,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 21950000,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 3,00,000 to Rs. 6,00,000 — 5% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 5,
+              "tax": 15000
+            },
+            {
+              "slab": "Rs. 6,00,000 to Rs. 9,00,000 — 10% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 10,
+              "tax": 30000
+            },
+            {
+              "slab": "Rs. 9,00,000 to Rs. 12,00,000 — 15% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 15,
+              "tax": 45000
+            },
+            {
+              "slab": "Rs. 12,00,000 to Rs. 15,00,000 — 20% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 20,
+              "tax": 60000
+            },
+            {
+              "slab": "Above Rs. 15,00,000 — 30% (Section 115BAC, AY 2025-26)",
+              "income": 20450000,
+              "rate": 30,
+              "tax": 6135000
+            }
+          ],
+          "taxBeforeSurcharge": 6285000,
+          "surcharge": 1571250,
+          "surchargeRate": 25,
+          "taxAfterSurcharge": 7856250,
+          "cess": 314250,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 8170500,
+          "effectiveTaxRate": 37.14,
+          "takeHomeIncome": 13829500
+        },
+        "recommendedRegime": "new",
+        "savings": 146250,
+        "savingsPercentage": 1.76,
+        "deductionsLost": 0,
+        "analysis": {
+          "oldRegimeBenefits": [],
+          "newRegimeBenefits": [
+            "Lower effective rate: 37.14% vs 37.80%",
+            "Simpler filing — fewer deductions to track"
+          ],
+          "recommendation": "New Regime saves ₹1,46,250 (1.8%) with lower slab rates."
+        }
+      }
+    },
+    {
+      "id": "V20-mixed-salary-business-other",
+      "description": "Salary + business + interest/dividend mix",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 900000,
+            "basicSalary": 360000,
+            "hraReceived": 0,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 0
+          },
+          "businessIncome": {
+            "grossReceipts": 2000000,
+            "digitalReceipts": 2000000,
+            "cashReceipts": 0,
+            "expenses": 0
+          },
+          "otherSources": {
+            "interestIncome": 45000,
+            "dividendIncome": 12000,
+            "other": 3000
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 0,
+            "ppf": 150000,
+            "elss": 0,
+            "nsc": 0,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 0
+          },
+          "section80D": {
+            "selfPremium": 0,
+            "parentsPremium": 0,
+            "preventiveHealthCheckup": 0,
+            "isSelfSenior": false,
+            "isParentsSenior": false
+          },
+          "section80E": {
+            "educationLoanInterest": 0
+          },
+          "section80G": {
+            "donations": 0
+          },
+          "hra": {
+            "rentPaid": 0,
+            "isMetro": false
+          },
+          "section16": {
+            "professionalTax": 0
+          }
+        },
+        "personalInfo": {
+          "pan": "ABCDE1234F",
+          "name": "Golden Vector",
+          "dateOfBirth": "1991-01-01",
+          "age": 35,
+          "isSeniorCitizen": false,
+          "isSuperSeniorCitizen": false,
+          "residentialStatus": "resident"
+        }
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 1080000,
+          "incomeBreakdown": {
+            "salary": 900000,
+            "houseProperty": 0,
+            "businessIncome": 120000,
+            "capitalGains": 0,
+            "otherSources": 60000
+          },
+          "totalDeductions": 200000,
+          "deductionBreakdown": {
+            "section80C": 150000,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 880000,
+          "slabWiseTax": [
+            {
+              "slab": "Income up to Rs. 2,50,000 — Nil (Finance Bill 2025, Paragraph A(I)(1))",
+              "income": 250000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 2,50,000 to Rs. 5,00,000 — 5% (Finance Bill 2025, Paragraph A(I)(2))",
+              "income": 250000,
+              "rate": 5,
+              "tax": 12500
+            },
+            {
+              "slab": "Rs. 5,00,000 to Rs. 10,00,000 — 20% (Finance Bill 2025, Paragraph A(I)(3))",
+              "income": 380000,
+              "rate": 20,
+              "tax": 76000
+            }
+          ],
+          "taxBeforeSurcharge": 88500,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 88500,
+          "cess": 3540,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 92040,
+          "effectiveTaxRate": 8.52,
+          "takeHomeIncome": 987960
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 1080000,
+          "incomeBreakdown": {
+            "salary": 900000,
+            "houseProperty": 0,
+            "businessIncome": 120000,
+            "capitalGains": 0,
+            "otherSources": 60000
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 1030000,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 3,00,000 to Rs. 6,00,000 — 5% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 5,
+              "tax": 15000
+            },
+            {
+              "slab": "Rs. 6,00,000 to Rs. 9,00,000 — 10% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 10,
+              "tax": 30000
+            },
+            {
+              "slab": "Rs. 9,00,000 to Rs. 12,00,000 — 15% (Section 115BAC, AY 2025-26)",
+              "income": 130000,
+              "rate": 15,
+              "tax": 19500
+            }
+          ],
+          "taxBeforeSurcharge": 64500,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 64500,
+          "cess": 2580,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 67080,
+          "effectiveTaxRate": 6.21,
+          "takeHomeIncome": 1012920
+        },
+        "recommendedRegime": "new",
+        "savings": 24960,
+        "savingsPercentage": 27.12,
+        "deductionsLost": 150000,
+        "analysis": {
+          "oldRegimeBenefits": [
+            "Deductions of ₹2,00,000 reduce your taxable income",
+            "Section 80C: ₹1,50,000"
+          ],
+          "newRegimeBenefits": [
+            "Lower effective rate: 6.21% vs 8.52%",
+            "Simpler filing — fewer deductions to track"
+          ],
+          "recommendation": "New Regime saves ₹24,960 (27.1%) with lower slab rates."
+        }
+      }
+    },
+    {
+      "id": "V21-house-property",
+      "description": "House property income with home-loan interest",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 1000000,
+            "basicSalary": 400000,
+            "hraReceived": 0,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 0
+          },
+          "houseProperty": {
+            "annualValue": 240000,
+            "municipalTaxes": 12000,
+            "interestOnHomeLoan": 180000
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 0,
+            "ppf": 0,
+            "elss": 0,
+            "nsc": 0,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 0
+          },
+          "section80D": {
+            "selfPremium": 0,
+            "parentsPremium": 0,
+            "preventiveHealthCheckup": 0,
+            "isSelfSenior": false,
+            "isParentsSenior": false
+          },
+          "section80E": {
+            "educationLoanInterest": 0
+          },
+          "section80G": {
+            "donations": 0
+          },
+          "hra": {
+            "rentPaid": 0,
+            "isMetro": false
+          },
+          "section16": {
+            "professionalTax": 0
+          }
+        },
+        "personalInfo": null
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 979600,
+          "incomeBreakdown": {
+            "salary": 1000000,
+            "houseProperty": -20400,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 929600,
+          "slabWiseTax": [
+            {
+              "slab": "Income up to Rs. 2,50,000 — Nil (Finance Bill 2025, Paragraph A(I)(1))",
+              "income": 250000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 2,50,000 to Rs. 5,00,000 — 5% (Finance Bill 2025, Paragraph A(I)(2))",
+              "income": 250000,
+              "rate": 5,
+              "tax": 12500
+            },
+            {
+              "slab": "Rs. 5,00,000 to Rs. 10,00,000 — 20% (Finance Bill 2025, Paragraph A(I)(3))",
+              "income": 429600,
+              "rate": 20,
+              "tax": 85920
+            }
+          ],
+          "taxBeforeSurcharge": 98420,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 98420,
+          "cess": 3937,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 102357,
+          "effectiveTaxRate": 10.45,
+          "takeHomeIncome": 877243
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 979600,
+          "incomeBreakdown": {
+            "salary": 1000000,
+            "houseProperty": -20400,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 929600,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 3,00,000 to Rs. 6,00,000 — 5% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 5,
+              "tax": 15000
+            },
+            {
+              "slab": "Rs. 6,00,000 to Rs. 9,00,000 — 10% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 10,
+              "tax": 30000
+            },
+            {
+              "slab": "Rs. 9,00,000 to Rs. 12,00,000 — 15% (Section 115BAC, AY 2025-26)",
+              "income": 29600,
+              "rate": 15,
+              "tax": 4440
+            }
+          ],
+          "taxBeforeSurcharge": 49440,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 49440,
+          "cess": 1978,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 51418,
+          "effectiveTaxRate": 5.25,
+          "takeHomeIncome": 928182
+        },
+        "recommendedRegime": "new",
+        "savings": 50939,
+        "savingsPercentage": 49.77,
+        "deductionsLost": 0,
+        "analysis": {
+          "oldRegimeBenefits": [],
+          "newRegimeBenefits": [
+            "Lower effective rate: 5.25% vs 10.45%",
+            "Simpler filing — fewer deductions to track"
+          ],
+          "recommendation": "New Regime saves ₹50,939 (49.8%) with lower slab rates."
+        }
+      }
+    },
+    {
+      "id": "V22-capital-gains",
+      "description": "Short + long term capital gains added to income",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 600000,
+            "basicSalary": 0,
+            "hraReceived": 0,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 0
+          },
+          "capitalGains": {
+            "shortTerm": 150000,
+            "longTerm": 250000
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 0,
+            "ppf": 0,
+            "elss": 0,
+            "nsc": 0,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 0
+          },
+          "section80D": {
+            "selfPremium": 0,
+            "parentsPremium": 0,
+            "preventiveHealthCheckup": 0,
+            "isSelfSenior": false,
+            "isParentsSenior": false
+          },
+          "section80E": {
+            "educationLoanInterest": 0
+          },
+          "section80G": {
+            "donations": 0
+          },
+          "hra": {
+            "rentPaid": 0,
+            "isMetro": false
+          },
+          "section16": {
+            "professionalTax": 0
+          }
+        },
+        "personalInfo": null
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 1000000,
+          "incomeBreakdown": {
+            "salary": 600000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 400000,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 950000,
+          "slabWiseTax": [
+            {
+              "slab": "Income up to Rs. 2,50,000 — Nil (Finance Bill 2025, Paragraph A(I)(1))",
+              "income": 250000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 2,50,000 to Rs. 5,00,000 — 5% (Finance Bill 2025, Paragraph A(I)(2))",
+              "income": 250000,
+              "rate": 5,
+              "tax": 12500
+            },
+            {
+              "slab": "Rs. 5,00,000 to Rs. 10,00,000 — 20% (Finance Bill 2025, Paragraph A(I)(3))",
+              "income": 450000,
+              "rate": 20,
+              "tax": 90000
+            }
+          ],
+          "taxBeforeSurcharge": 102500,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 102500,
+          "cess": 4100,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 106600,
+          "effectiveTaxRate": 10.66,
+          "takeHomeIncome": 893400
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 1000000,
+          "incomeBreakdown": {
+            "salary": 600000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 400000,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 950000,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 3,00,000 to Rs. 6,00,000 — 5% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 5,
+              "tax": 15000
+            },
+            {
+              "slab": "Rs. 6,00,000 to Rs. 9,00,000 — 10% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 10,
+              "tax": 30000
+            },
+            {
+              "slab": "Rs. 9,00,000 to Rs. 12,00,000 — 15% (Section 115BAC, AY 2025-26)",
+              "income": 50000,
+              "rate": 15,
+              "tax": 7500
+            }
+          ],
+          "taxBeforeSurcharge": 52500,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 52500,
+          "cess": 2100,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 54600,
+          "effectiveTaxRate": 5.46,
+          "takeHomeIncome": 945400
+        },
+        "recommendedRegime": "new",
+        "savings": 52000,
+        "savingsPercentage": 48.78,
+        "deductionsLost": 0,
+        "analysis": {
+          "oldRegimeBenefits": [],
+          "newRegimeBenefits": [
+            "Lower effective rate: 5.46% vs 10.66%",
+            "Simpler filing — fewer deductions to track"
+          ],
+          "recommendation": "New Regime saves ₹52,000 (48.8%) with lower slab rates."
+        }
+      }
+    },
+    {
+      "id": "V23-proftax-only",
+      "description": "Professional tax as Section 16 deduction (both regimes)",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 550000,
+            "basicSalary": 0,
+            "hraReceived": 0,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 2400
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 0,
+            "ppf": 0,
+            "elss": 0,
+            "nsc": 0,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 0
+          },
+          "section80D": {
+            "selfPremium": 0,
+            "parentsPremium": 0,
+            "preventiveHealthCheckup": 0,
+            "isSelfSenior": false,
+            "isParentsSenior": false
+          },
+          "section80E": {
+            "educationLoanInterest": 0
+          },
+          "section80G": {
+            "donations": 0
+          },
+          "hra": {
+            "rentPaid": 0,
+            "isMetro": false
+          },
+          "section16": {
+            "professionalTax": 2400
+          }
+        },
+        "personalInfo": null
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 550000,
+          "incomeBreakdown": {
+            "salary": 550000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 52400,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 2400
+          },
+          "taxableIncome": 497600,
+          "slabWiseTax": [
+            {
+              "slab": "Income up to Rs. 2,50,000 — Nil (Finance Bill 2025, Paragraph A(I)(1))",
+              "income": 250000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 2,50,000 to Rs. 5,00,000 — 5% (Finance Bill 2025, Paragraph A(I)(2))",
+              "income": 247600,
+              "rate": 5,
+              "tax": 12380
+            }
+          ],
+          "taxBeforeSurcharge": 12380,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 0,
+          "cess": 0,
+          "cessRate": 4,
+          "rebate87A": 12380,
+          "totalTaxLiability": 0,
+          "effectiveTaxRate": 0,
+          "takeHomeIncome": 550000
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 550000,
+          "incomeBreakdown": {
+            "salary": 550000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 52400,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 2400
+          },
+          "taxableIncome": 497600,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 3,00,000 to Rs. 6,00,000 — 5% (Section 115BAC, AY 2025-26)",
+              "income": 197600,
+              "rate": 5,
+              "tax": 9880
+            }
+          ],
+          "taxBeforeSurcharge": 9880,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 0,
+          "cess": 0,
+          "cessRate": 4,
+          "rebate87A": 9880,
+          "totalTaxLiability": 0,
+          "effectiveTaxRate": 0,
+          "takeHomeIncome": 550000
+        },
+        "recommendedRegime": "old",
+        "savings": 0,
+        "savingsPercentage": 0,
+        "deductionsLost": 0,
+        "analysis": {
+          "oldRegimeBenefits": [
+            "Section 87A rebate: ₹12,380"
+          ],
+          "newRegimeBenefits": [
+            "Section 87A rebate: ₹9,880",
+            "Simpler filing — fewer deductions to track",
+            "Eligible for full 87A rebate — zero tax"
+          ],
+          "recommendation": "Both regimes result in equal tax. Choose New Regime for simpler filing."
+        }
+      }
+    },
+    {
+      "id": "V24-uat-p2-oldwins",
+      "description": "UAT P2 mirror — heavy deductions, old regime wins",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 1200000,
+            "basicSalary": 480000,
+            "hraReceived": 200000,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 0
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 0,
+            "ppf": 100000,
+            "elss": 50000,
+            "nsc": 0,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 50000
+          },
+          "section80D": {
+            "selfPremium": 25000,
+            "parentsPremium": 0,
+            "preventiveHealthCheckup": 0,
+            "isSelfSenior": false,
+            "isParentsSenior": false
+          },
+          "section80E": {
+            "educationLoanInterest": 0
+          },
+          "section80G": {
+            "donations": 10000
+          },
+          "hra": {
+            "rentPaid": 240000,
+            "isMetro": false
+          },
+          "section16": {
+            "professionalTax": 0
+          }
+        },
+        "personalInfo": null
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 1400000,
+          "incomeBreakdown": {
+            "salary": 1400000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 472000,
+          "deductionBreakdown": {
+            "section80C": 150000,
+            "section80CCD1B": 50000,
+            "section80D": 25000,
+            "section80E": 0,
+            "section80G": 5000,
+            "hra": 192000,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 928000,
+          "slabWiseTax": [
+            {
+              "slab": "Income up to Rs. 2,50,000 — Nil (Finance Bill 2025, Paragraph A(I)(1))",
+              "income": 250000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 2,50,000 to Rs. 5,00,000 — 5% (Finance Bill 2025, Paragraph A(I)(2))",
+              "income": 250000,
+              "rate": 5,
+              "tax": 12500
+            },
+            {
+              "slab": "Rs. 5,00,000 to Rs. 10,00,000 — 20% (Finance Bill 2025, Paragraph A(I)(3))",
+              "income": 428000,
+              "rate": 20,
+              "tax": 85600
+            }
+          ],
+          "taxBeforeSurcharge": 98100,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 98100,
+          "cess": 3924,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 102024,
+          "effectiveTaxRate": 7.29,
+          "takeHomeIncome": 1297976
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 1400000,
+          "incomeBreakdown": {
+            "salary": 1400000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 1350000,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 3,00,000 to Rs. 6,00,000 — 5% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 5,
+              "tax": 15000
+            },
+            {
+              "slab": "Rs. 6,00,000 to Rs. 9,00,000 — 10% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 10,
+              "tax": 30000
+            },
+            {
+              "slab": "Rs. 9,00,000 to Rs. 12,00,000 — 15% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 15,
+              "tax": 45000
+            },
+            {
+              "slab": "Rs. 12,00,000 to Rs. 15,00,000 — 20% (Section 115BAC, AY 2025-26)",
+              "income": 150000,
+              "rate": 20,
+              "tax": 30000
+            }
+          ],
+          "taxBeforeSurcharge": 120000,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 120000,
+          "cess": 4800,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 124800,
+          "effectiveTaxRate": 8.91,
+          "takeHomeIncome": 1275200
+        },
+        "recommendedRegime": "old",
+        "savings": 22776,
+        "savingsPercentage": 18.25,
+        "deductionsLost": 422000,
+        "analysis": {
+          "oldRegimeBenefits": [
+            "Deductions of ₹4,72,000 reduce your taxable income",
+            "Section 80C: ₹1,50,000",
+            "HRA exemption: ₹1,92,000",
+            "Health insurance (80D): ₹25,000"
+          ],
+          "newRegimeBenefits": [
+            "Simpler filing — fewer deductions to track"
+          ],
+          "recommendation": "Old Regime saves ₹22,776 (18.3%) by using your deductions."
+        }
+      }
+    },
+    {
+      "id": "V25-half-slab-350010",
+      "description": "5% slab tax lands on ₹x.50 (old: 2500.5, new: 0.5) — half-up must win",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 350010,
+            "basicSalary": 0,
+            "hraReceived": 0,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 0
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 0,
+            "ppf": 0,
+            "elss": 0,
+            "nsc": 0,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 0
+          },
+          "section80D": {
+            "selfPremium": 0,
+            "parentsPremium": 0,
+            "preventiveHealthCheckup": 0,
+            "isSelfSenior": false,
+            "isParentsSenior": false
+          },
+          "section80E": {
+            "educationLoanInterest": 0
+          },
+          "section80G": {
+            "donations": 0
+          },
+          "hra": {
+            "rentPaid": 0,
+            "isMetro": false
+          },
+          "section16": {
+            "professionalTax": 0
+          }
+        },
+        "personalInfo": null
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 350010,
+          "incomeBreakdown": {
+            "salary": 350010,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 300010,
+          "slabWiseTax": [
+            {
+              "slab": "Income up to Rs. 2,50,000 — Nil (Finance Bill 2025, Paragraph A(I)(1))",
+              "income": 250000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 2,50,000 to Rs. 5,00,000 — 5% (Finance Bill 2025, Paragraph A(I)(2))",
+              "income": 50010,
+              "rate": 5,
+              "tax": 2501
+            }
+          ],
+          "taxBeforeSurcharge": 2501,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 0,
+          "cess": 0,
+          "cessRate": 4,
+          "rebate87A": 2501,
+          "totalTaxLiability": 0,
+          "effectiveTaxRate": 0,
+          "takeHomeIncome": 350010
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 350010,
+          "incomeBreakdown": {
+            "salary": 350010,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 300010,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 3,00,000 to Rs. 6,00,000 — 5% (Section 115BAC, AY 2025-26)",
+              "income": 10,
+              "rate": 5,
+              "tax": 1
+            }
+          ],
+          "taxBeforeSurcharge": 1,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 0,
+          "cess": 0,
+          "cessRate": 4,
+          "rebate87A": 1,
+          "totalTaxLiability": 0,
+          "effectiveTaxRate": 0,
+          "takeHomeIncome": 350010
+        },
+        "recommendedRegime": "old",
+        "savings": 0,
+        "savingsPercentage": 0,
+        "deductionsLost": 0,
+        "analysis": {
+          "oldRegimeBenefits": [
+            "Section 87A rebate: ₹2,501"
+          ],
+          "newRegimeBenefits": [
+            "Section 87A rebate: ₹1",
+            "Simpler filing — fewer deductions to track",
+            "Eligible for full 87A rebate — zero tax"
+          ],
+          "recommendation": "Both regimes result in equal tax. Choose New Regime for simpler filing."
+        }
+      }
+    },
+    {
+      "id": "V26-half-80g-odd-donation",
+      "description": "80G 50% of odd ₹1,001 donation = ₹500.50 — half-up must win",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 800000,
+            "basicSalary": 320000,
+            "hraReceived": 0,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 0
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 0,
+            "ppf": 0,
+            "elss": 0,
+            "nsc": 0,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 0
+          },
+          "section80D": {
+            "selfPremium": 0,
+            "parentsPremium": 0,
+            "preventiveHealthCheckup": 0,
+            "isSelfSenior": false,
+            "isParentsSenior": false
+          },
+          "section80E": {
+            "educationLoanInterest": 0
+          },
+          "section80G": {
+            "donations": 1001
+          },
+          "hra": {
+            "rentPaid": 0,
+            "isMetro": false
+          },
+          "section16": {
+            "professionalTax": 0
+          }
+        },
+        "personalInfo": null
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 800000,
+          "incomeBreakdown": {
+            "salary": 800000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50501,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 501,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 749499,
+          "slabWiseTax": [
+            {
+              "slab": "Income up to Rs. 2,50,000 — Nil (Finance Bill 2025, Paragraph A(I)(1))",
+              "income": 250000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 2,50,000 to Rs. 5,00,000 — 5% (Finance Bill 2025, Paragraph A(I)(2))",
+              "income": 250000,
+              "rate": 5,
+              "tax": 12500
+            },
+            {
+              "slab": "Rs. 5,00,000 to Rs. 10,00,000 — 20% (Finance Bill 2025, Paragraph A(I)(3))",
+              "income": 249499,
+              "rate": 20,
+              "tax": 49900
+            }
+          ],
+          "taxBeforeSurcharge": 62400,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 62400,
+          "cess": 2496,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 64896,
+          "effectiveTaxRate": 8.11,
+          "takeHomeIncome": 735104
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 800000,
+          "incomeBreakdown": {
+            "salary": 800000,
+            "houseProperty": 0,
+            "businessIncome": 0,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 750000,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 0,
+              "tax": 0
+            },
+            {
+              "slab": "Rs. 3,00,000 to Rs. 6,00,000 — 5% (Section 115BAC, AY 2025-26)",
+              "income": 300000,
+              "rate": 5,
+              "tax": 15000
+            },
+            {
+              "slab": "Rs. 6,00,000 to Rs. 9,00,000 — 10% (Section 115BAC, AY 2025-26)",
+              "income": 150000,
+              "rate": 10,
+              "tax": 15000
+            }
+          ],
+          "taxBeforeSurcharge": 30000,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 30000,
+          "cess": 1200,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 31200,
+          "effectiveTaxRate": 3.9,
+          "takeHomeIncome": 768800
+        },
+        "recommendedRegime": "new",
+        "savings": 33696,
+        "savingsPercentage": 51.92,
+        "deductionsLost": 501,
+        "analysis": {
+          "oldRegimeBenefits": [],
+          "newRegimeBenefits": [
+            "Lower effective rate: 3.90% vs 8.11%",
+            "Simpler filing — fewer deductions to track"
+          ],
+          "recommendation": "New Regime saves ₹33,696 (51.9%) with lower slab rates."
+        }
+      }
+    },
+    {
+      "id": "V27-half-44ad-60001.5",
+      "description": "44AD 6% of ₹10,00,025 digital = ₹60,001.50 — half-up must win",
+      "input": {
+        "income": {
+          "salary": {
+            "grossSalary": 0,
+            "basicSalary": 0,
+            "hraReceived": 0,
+            "specialAllowance": 0,
+            "otherAllowances": 0,
+            "professionalTax": 0
+          },
+          "businessIncome": {
+            "grossReceipts": 1000025,
+            "digitalReceipts": 1000025,
+            "cashReceipts": 0,
+            "expenses": 0
+          }
+        },
+        "deductions": {
+          "section80C": {
+            "lic": 0,
+            "ppf": 0,
+            "elss": 0,
+            "nsc": 0,
+            "homeLoanPrincipal": 0,
+            "tuitionFees": 0,
+            "sukanyaSamriddhi": 0,
+            "other": 0
+          },
+          "section80CCD1B": {
+            "npsAdditional": 0
+          },
+          "section80D": {
+            "selfPremium": 0,
+            "parentsPremium": 0,
+            "preventiveHealthCheckup": 0,
+            "isSelfSenior": false,
+            "isParentsSenior": false
+          },
+          "section80E": {
+            "educationLoanInterest": 0
+          },
+          "section80G": {
+            "donations": 0
+          },
+          "hra": {
+            "rentPaid": 0,
+            "isMetro": false
+          },
+          "section16": {
+            "professionalTax": 0
+          }
+        },
+        "personalInfo": null
+      },
+      "expected": {
+        "oldRegime": {
+          "regime": "old",
+          "grossTotalIncome": 60002,
+          "incomeBreakdown": {
+            "salary": 0,
+            "houseProperty": 0,
+            "businessIncome": 60002,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 10002,
+          "slabWiseTax": [
+            {
+              "slab": "Income up to Rs. 2,50,000 — Nil (Finance Bill 2025, Paragraph A(I)(1))",
+              "income": 10002,
+              "rate": 0,
+              "tax": 0
+            }
+          ],
+          "taxBeforeSurcharge": 0,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 0,
+          "cess": 0,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 0,
+          "effectiveTaxRate": 0,
+          "takeHomeIncome": 60002
+        },
+        "newRegime": {
+          "regime": "new",
+          "grossTotalIncome": 60002,
+          "incomeBreakdown": {
+            "salary": 0,
+            "houseProperty": 0,
+            "businessIncome": 60002,
+            "capitalGains": 0,
+            "otherSources": 0
+          },
+          "totalDeductions": 50000,
+          "deductionBreakdown": {
+            "section80C": 0,
+            "section80CCD1B": 0,
+            "section80D": 0,
+            "section80E": 0,
+            "section80G": 0,
+            "hra": 0,
+            "standardDeduction": 50000,
+            "professionalTax": 0
+          },
+          "taxableIncome": 10002,
+          "slabWiseTax": [
+            {
+              "slab": "Up to Rs. 3,00,000 — Nil (Section 115BAC, AY 2025-26)",
+              "income": 10002,
+              "rate": 0,
+              "tax": 0
+            }
+          ],
+          "taxBeforeSurcharge": 0,
+          "surcharge": 0,
+          "surchargeRate": 0,
+          "taxAfterSurcharge": 0,
+          "cess": 0,
+          "cessRate": 4,
+          "rebate87A": 0,
+          "totalTaxLiability": 0,
+          "effectiveTaxRate": 0,
+          "takeHomeIncome": 60002
+        },
+        "recommendedRegime": "old",
+        "savings": 0,
+        "savingsPercentage": 0,
+        "deductionsLost": 0,
+        "analysis": {
+          "oldRegimeBenefits": [],
+          "newRegimeBenefits": [
+            "Simpler filing — fewer deductions to track",
+            "Eligible for full 87A rebate — zero tax"
+          ],
+          "recommendation": "Both regimes result in equal tax. Choose New Regime for simpler filing."
+        }
+      }
+    }
+  ]
+}

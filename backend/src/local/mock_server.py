@@ -19,12 +19,21 @@ Design reference: design.md — Gap 5 (BLOCKER-3 / Mock server for local dev)
 
 import json
 import os
+import sys
 import time
 import sqlite3
 import hashlib
 import random
 from typing import Any, Optional
 from contextlib import contextmanager
+
+# Delegate tax math to the REAL engine (OPT-A2 single source of truth) instead
+# of a divergent mock. calculate.py mirrors taxCalculator.ts exactly, both
+# pinned by shared/golden-vectors.json.
+sys.path.insert(
+    0, os.path.join(os.path.dirname(__file__), "..", "lambdas", "tax_calculation")
+)
+from calculate import compare_regimes  # noqa: E402
 
 from fastapi import FastAPI, HTTPException, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -139,6 +148,11 @@ class CalculateRequest(BaseModel):
     taxData: Optional[dict] = None
     income: Optional[dict] = None
     deductions: Optional[dict] = None
+
+class AssistantRequest(BaseModel):
+    messages: list[dict]                     # [{role, content}, ...]
+    language: Optional[str] = "en"
+    scenario: Optional[dict] = None          # {category?, grossSalary?, investableBudget?, ...}
 
 # ---------------------------------------------------------------------------
 # Auth endpoints
@@ -273,64 +287,81 @@ async def get_sessions():
 @app.post("/calculate")
 async def calculate(body: CalculateRequest):
     """
-    Mock tax calculation endpoint.
-    Returns a simple regime comparison without calling real Lambda.
+    Tax calculation endpoint — delegates to the real engine (calculate.py),
+    so the local server returns numbers IDENTICAL to the client-side
+    TaxCalculator and the production Lambda. Returns the full
+    RegimeComparisonResult (both regimes, slab-wise breakdown, surcharge,
+    87A, cess), not a simplified mock.
     """
-    # Minimal calculation — returns plausible structure for UI testing
-    gross = 0
-    if body.taxData:
-        gross = body.taxData.get("income", {}).get("salary", {}).get("grossSalary", 0)
-    elif body.income:
-        gross = body.income.get("salary", {}).get("grossSalary", 0)
+    # Accept either a nested taxData envelope or top-level income/deductions.
+    src = body.taxData or {}
+    income = src.get("income", body.income) or {}
+    deductions = src.get("deductions", body.deductions) or {}
+    personal_info = src.get("personalInfo") or getattr(body, "personalInfo", None)
 
-    taxable_old = max(0, gross - 250000 - 50000)  # rough deduction estimate
-    taxable_new = max(0, gross - 50000)
+    try:
+        result = compare_regimes(income, deductions, personal_info)
+    except ValueError as exc:  # e.g. NRI/RNOR guard
+        raise HTTPException(status_code=400, detail=str(exc))
 
-    def slab_tax_old(income):
-        tax = 0
-        if income > 250000:
-            tax += min(income - 250000, 250000) * 0.05
-        if income > 500000:
-            tax += min(income - 500000, 500000) * 0.20
-        if income > 1000000:
-            tax += (income - 1000000) * 0.30
-        return round(tax * 1.04)  # + 4% cess
+    result["calculationId"] = f"calc-{int(time.time())}"
+    return result
 
-    def slab_tax_new(income):
-        tax = 0
-        if income > 300000:
-            tax += min(income - 300000, 300000) * 0.05
-        if income > 600000:
-            tax += min(income - 600000, 300000) * 0.10
-        if income > 900000:
-            tax += min(income - 900000, 300000) * 0.15
-        if income > 1200000:
-            tax += min(income - 1200000, 300000) * 0.20
-        if income > 1500000:
-            tax += (income - 1500000) * 0.30
-        rebate = min(tax, 25000) if income <= 700000 else 0
-        return round((tax - rebate) * 1.04)
+# ---------------------------------------------------------------------------
+# Guided assistant endpoint (Module 5.2.3) — provider + optimiser driven.
+# Makes the assistant DYNAMIC: category routing comes from the provider, and a
+# concrete recommendation is COMPUTED by the optimiser when the scenario carries
+# income. Offline it uses the rule-based provider; with an ANTHROPIC_API_KEY the
+# same endpoint returns an LLM-generated, per-language roadmap (no code change).
+# ---------------------------------------------------------------------------
 
-    old_tax = slab_tax_old(taxable_old)
-    new_tax = slab_tax_new(taxable_new)
-    recommended = "OLD" if old_tax <= new_tax else "NEW"
+@app.post("/assistant")
+async def assistant(body: AssistantRequest):
+    # Imports resolve because the server runs as `python -m uvicorn` from backend/.
+    from src.providers import ChatMessage, get_provider
+    from src.optimization.tax_optimizer import OptimizerInput, optimize
+    from src.optimization.decision_engine import decide
 
-    return {
-        "calculationId": f"calc-mock-{int(time.time())}",
-        "grossTotalIncome": gross,
-        "oldRegime": {
-            "taxableIncome": taxable_old,
-            "totalTax": old_tax,
-            "effectiveTaxRate": round(old_tax / gross * 100, 2) if gross > 0 else 0,
-        },
-        "newRegime": {
-            "taxableIncome": taxable_new,
-            "totalTax": new_tax,
-            "effectiveTaxRate": round(new_tax / gross * 100, 2) if gross > 0 else 0,
-        },
-        "recommendedRegime": recommended,
-        "taxSavings": abs(old_tax - new_tax),
+    provider = get_provider()
+    messages = [ChatMessage(m.get("role", "user"), m.get("content", "")) for m in body.messages]
+    try:
+        resp = provider.chat(messages)
+    except Exception as exc:  # provider unavailable → never 500 the assistant
+        raise HTTPException(status_code=503, detail=f"Assistant provider unavailable: {exc}")
+
+    out: dict[str, Any] = {
+        "content": resp.content,
+        "provider": resp.provider,
+        "offline": resp.offline,
+        "category": resp.category,
+        "citations": resp.citations,
+        "language": body.language or "en",
     }
+
+    # Dynamic, engine-verified recommendation when the scenario carries income.
+    sc = body.scenario or {}
+    gross = sc.get("grossSalary")
+    if isinstance(gross, (int, float)) and gross > 0:
+        inp = OptimizerInput(
+            gross_salary=int(gross),
+            investable_budget=sc.get("investableBudget"),
+            health_insurance_80d=int(sc.get("healthInsurance80D", 0) or 0),
+            is_senior=bool(sc.get("isSenior", False)),
+        )
+        opt = optimize(inp)
+        dec = decide(inp, sc.get("weightProfile", "balanced"))
+        out["recommendation"] = {
+            "recommendedRegime": dec.recommended_regime,
+            "totalTax": opt.total_tax,
+            "oldTax": opt.old_tax_optimal,
+            "newTax": opt.new_tax,
+            "budgetDeployed": opt.budget_deployed,
+            "advocate": opt.advocate,
+            "adversary": opt.adversary,
+            "note": dec.note,
+        }
+
+    return out
 
 # ---------------------------------------------------------------------------
 # Error reporting endpoint (swallowed by ErrorBoundary)
@@ -341,6 +372,44 @@ async def log_error(request: Request):
     body = await request.json()
     print(f"[ERROR LOG] {body.get('message', 'Unknown error')} @ {body.get('timestamp', '')}")
     return {"logged": True}
+
+# ---------------------------------------------------------------------------
+# Tax rules (mocks the AppConfig-backed GET /tax-rules/{fy} route — OPT-A1)
+# ---------------------------------------------------------------------------
+
+# In production this route is a Lambda reading the AppConfig data plane
+# (appconfigdata:GetLatestConfiguration). Locally we serve the same JSON the
+# AppConfig hosted configuration was seeded from (shared/tax-rules-*.json),
+# so the frontend hot-reload path is exercised end-to-end in dev.
+# mock_server.py lives at backend/src/local/ → repo root is three levels up.
+_SHARED_DIR = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "..", "..", "shared")
+)
+
+_TAX_RULES_FILES = {
+    "FY2025-26": "tax-rules-fy2025-26.json",
+    "AY2025-26": "tax-rules-fy2025-26.json",
+    "FY2026-27": "tax-rules-fy2026-27.json",
+    "AY2026-27": "tax-rules-fy2026-27.json",
+}
+
+
+@app.get("/tax-rules/{financial_year}")
+async def get_tax_rules(financial_year: str):
+    filename = _TAX_RULES_FILES.get(financial_year)
+    if filename is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No tax rules for '{financial_year}'. "
+                   f"Supported: {sorted(set(_TAX_RULES_FILES))}",
+        )
+
+    rules_path = os.path.join(_SHARED_DIR, filename)
+    if not os.path.exists(rules_path):
+        raise HTTPException(status_code=503, detail=f"Rules file missing: {filename}")
+
+    with open(rules_path, encoding="utf-8") as fh:
+        return json.load(fh)
 
 # ---------------------------------------------------------------------------
 # Health check

@@ -1,0 +1,105 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  frontend-test:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run linter
+        run: npm run lint --workspace=frontend
+      
+      - name: Run tests
+        run: npm run test --workspace=frontend
+      
+      - name: Build
+        run: npm run build --workspace=frontend
+
+      - name: Check bundle size budget (initial JS < 500 KB gzip)
+        run: npm run check:bundle --workspace=frontend
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./frontend/coverage/coverage-final.json
+          flags: frontend
+
+  backend-test:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt
+      
+      - name: Run linter
+        run: |
+          cd backend
+          pylint src/
+      
+      - name: Run type checker
+        run: |
+          cd backend
+          mypy src/
+      
+      - name: Guard — fail if zero tests collected
+        run: |
+          cd backend
+          COUNT=$(python -m pytest --collect-only -q 2>/dev/null | grep "test session starts" -A 100 | grep -c "test_" || true)
+          echo "Collected test count: $COUNT"
+          if [ "$COUNT" -lt 5 ]; then
+            echo "ERROR: Fewer than 5 tests collected. CI requires at least 5 backend tests."
+            exit 1
+          fi
+
+      - name: Run tests
+        run: |
+          cd backend
+          pytest --cov=src --cov-report=xml
+      
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./backend/coverage.xml
+          flags: backend
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run Snyk Security Scan
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high

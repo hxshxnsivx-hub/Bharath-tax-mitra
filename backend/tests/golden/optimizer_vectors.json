@@ -1,0 +1,182 @@
+[
+  {
+    "name": "salaried_5L_boundary_no_budget",
+    "input": {
+      "gross_salary": 500000,
+      "investable_budget": 0
+    },
+    "expected": {
+      "recommended_regime": "old",
+      "weighted_recommendation": "old",
+      "total_tax": 0,
+      "old_tax_optimal": 0,
+      "old_tax_no_discretionary": 0,
+      "new_tax": 0,
+      "budget_deployed": 0,
+      "allocation": {
+        "section80C": 0,
+        "section80CCD1B": 0
+      },
+      "discretionary_saving": 0,
+      "vs_other_regime_saving": 0
+    }
+  },
+  {
+    "name": "salaried_6L_no_budget",
+    "input": {
+      "gross_salary": 600000,
+      "investable_budget": 0
+    },
+    "expected": {
+      "recommended_regime": "new",
+      "weighted_recommendation": "new",
+      "total_tax": 0,
+      "old_tax_optimal": 23400,
+      "old_tax_no_discretionary": 23400,
+      "new_tax": 0,
+      "budget_deployed": 0,
+      "allocation": {
+        "section80C": 0,
+        "section80CCD1B": 0
+      },
+      "discretionary_saving": 0,
+      "vs_other_regime_saving": 23400
+    }
+  },
+  {
+    "name": "salaried_8L_full_budget_flip",
+    "input": {
+      "gross_salary": 800000,
+      "investable_budget": 200000
+    },
+    "expected": {
+      "recommended_regime": "old",
+      "weighted_recommendation": "old",
+      "total_tax": 23400,
+      "old_tax_optimal": 23400,
+      "old_tax_no_discretionary": 65000,
+      "new_tax": 31200,
+      "budget_deployed": 200000,
+      "allocation": {
+        "section80C": 150000,
+        "section80CCD1B": 50000
+      },
+      "discretionary_saving": 41600,
+      "vs_other_regime_saving": 7800
+    }
+  },
+  {
+    "name": "salaried_12L_partial_budget",
+    "input": {
+      "gross_salary": 1200000,
+      "investable_budget": 100000
+    },
+    "expected": {
+      "recommended_regime": "new",
+      "weighted_recommendation": "new",
+      "total_tax": 85800,
+      "old_tax_optimal": 132600,
+      "old_tax_no_discretionary": 163800,
+      "new_tax": 85800,
+      "budget_deployed": 100000,
+      "allocation": {
+        "section80C": 100000,
+        "section80CCD1B": 0
+      },
+      "discretionary_saving": 31200,
+      "vs_other_regime_saving": 46800
+    }
+  },
+  {
+    "name": "salaried_15L_full_budget_health",
+    "input": {
+      "gross_salary": 1500000,
+      "investable_budget": 200000,
+      "health_insurance_80d": 25000
+    },
+    "expected": {
+      "recommended_regime": "new",
+      "weighted_recommendation": "new",
+      "total_tax": 145600,
+      "old_tax_optimal": 187200,
+      "old_tax_no_discretionary": 249600,
+      "new_tax": 145600,
+      "budget_deployed": 200000,
+      "allocation": {
+        "section80C": 150000,
+        "section80CCD1B": 50000
+      },
+      "discretionary_saving": 62400,
+      "vs_other_regime_saving": 41600
+    }
+  },
+  {
+    "name": "salaried_18L_80e_80g",
+    "input": {
+      "gross_salary": 1800000,
+      "investable_budget": 200000,
+      "education_loan_interest_80e": 50000,
+      "donations_80g": 20000
+    },
+    "expected": {
+      "recommended_regime": "new",
+      "weighted_recommendation": "new",
+      "total_tax": 234000,
+      "old_tax_optimal": 269880,
+      "old_tax_no_discretionary": 332280,
+      "new_tax": 234000,
+      "budget_deployed": 200000,
+      "allocation": {
+        "section80C": 150000,
+        "section80CCD1B": 50000
+      },
+      "discretionary_saving": 62400,
+      "vs_other_regime_saving": 35880
+    }
+  },
+  {
+    "name": "senior_10L_partial_budget",
+    "input": {
+      "gross_salary": 1000000,
+      "investable_budget": 150000,
+      "is_senior": true
+    },
+    "expected": {
+      "recommended_regime": "new",
+      "weighted_recommendation": "new",
+      "total_tax": 54600,
+      "old_tax_optimal": 72800,
+      "old_tax_no_discretionary": 104000,
+      "new_tax": 54600,
+      "budget_deployed": 150000,
+      "allocation": {
+        "section80C": 150000,
+        "section80CCD1B": 0
+      },
+      "discretionary_saving": 31200,
+      "vs_other_regime_saving": 18200
+    }
+  },
+  {
+    "name": "salaried_25L_full_budget",
+    "input": {
+      "gross_salary": 2500000,
+      "investable_budget": 200000
+    },
+    "expected": {
+      "recommended_regime": "new",
+      "weighted_recommendation": "new",
+      "total_tax": 452400,
+      "old_tax_optimal": 507000,
+      "old_tax_no_discretionary": 569400,
+      "new_tax": 452400,
+      "budget_deployed": 200000,
+      "allocation": {
+        "section80C": 150000,
+        "section80CCD1B": 50000
+      },
+      "discretionary_saving": 62400,
+      "vs_other_regime_saving": 54600
+    }
+  }
+]
