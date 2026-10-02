@@ -18,7 +18,10 @@
         "section80CCD1B": 0
       },
       "discretionary_saving": 0,
-      "vs_other_regime_saving": 0
+      "vs_other_regime_saving": 0,
+      "hra_exemption": 0,
+      "presumptive_income": 0,
+      "digital_shift_saving": 0
     }
   },
   {
@@ -40,7 +43,10 @@
         "section80CCD1B": 0
       },
       "discretionary_saving": 0,
-      "vs_other_regime_saving": 23400
+      "vs_other_regime_saving": 23400,
+      "hra_exemption": 0,
+      "presumptive_income": 0,
+      "digital_shift_saving": 0
     }
   },
   {
@@ -62,7 +68,10 @@
         "section80CCD1B": 50000
       },
       "discretionary_saving": 41600,
-      "vs_other_regime_saving": 7800
+      "vs_other_regime_saving": 7800,
+      "hra_exemption": 0,
+      "presumptive_income": 0,
+      "digital_shift_saving": 0
     }
   },
   {
@@ -84,7 +93,10 @@
         "section80CCD1B": 0
       },
       "discretionary_saving": 31200,
-      "vs_other_regime_saving": 46800
+      "vs_other_regime_saving": 46800,
+      "hra_exemption": 0,
+      "presumptive_income": 0,
+      "digital_shift_saving": 0
     }
   },
   {
@@ -107,7 +119,10 @@
         "section80CCD1B": 50000
       },
       "discretionary_saving": 62400,
-      "vs_other_regime_saving": 41600
+      "vs_other_regime_saving": 41600,
+      "hra_exemption": 0,
+      "presumptive_income": 0,
+      "digital_shift_saving": 0
     }
   },
   {
@@ -131,7 +146,10 @@
         "section80CCD1B": 50000
       },
       "discretionary_saving": 62400,
-      "vs_other_regime_saving": 35880
+      "vs_other_regime_saving": 35880,
+      "hra_exemption": 0,
+      "presumptive_income": 0,
+      "digital_shift_saving": 0
     }
   },
   {
@@ -154,7 +172,10 @@
         "section80CCD1B": 0
       },
       "discretionary_saving": 31200,
-      "vs_other_regime_saving": 18200
+      "vs_other_regime_saving": 18200,
+      "hra_exemption": 0,
+      "presumptive_income": 0,
+      "digital_shift_saving": 0
     }
   },
   {
@@ -176,7 +197,260 @@
         "section80CCD1B": 50000
       },
       "discretionary_saving": 62400,
-      "vs_other_regime_saving": 54600
+      "vs_other_regime_saving": 54600,
+      "hra_exemption": 0,
+      "presumptive_income": 0,
+      "digital_shift_saving": 0
+    }
+  },
+  {
+    "name": "hra_metro_renter_flips_to_old",
+    "input": {
+      "gross_salary": 1200000,
+      "basic_salary": 750000,
+      "professional_tax": 2400,
+      "investable_budget": 200000,
+      "health_insurance_80d": 25000,
+      "hra_received": 300000,
+      "rent_paid": 360000,
+      "is_metro": true
+    },
+    "expected": {
+      "recommended_regime": "old",
+      "weighted_recommendation": "old",
+      "total_tax": 104021,
+      "old_tax_optimal": 104021,
+      "old_tax_no_discretionary": 159931,
+      "new_tax": 145101,
+      "budget_deployed": 200000,
+      "allocation": {
+        "section80C": 150000,
+        "section80CCD1B": 50000
+      },
+      "discretionary_saving": 55910,
+      "vs_other_regime_saving": 41080,
+      "hra_exemption": 285000,
+      "presumptive_income": 0,
+      "digital_shift_saving": 0
+    }
+  },
+  {
+    "name": "hra_non_metro_cap_binds",
+    "input": {
+      "gross_salary": 1200000,
+      "basic_salary": 750000,
+      "investable_budget": 200000,
+      "hra_received": 400000,
+      "rent_paid": 600000,
+      "is_metro": false
+    },
+    "expected": {
+      "recommended_regime": "old",
+      "weighted_recommendation": "old",
+      "total_tax": 132600,
+      "old_tax_optimal": 132600,
+      "old_tax_no_discretionary": 195000,
+      "new_tax": 171600,
+      "budget_deployed": 200000,
+      "allocation": {
+        "section80C": 150000,
+        "section80CCD1B": 50000
+      },
+      "discretionary_saving": 62400,
+      "vs_other_regime_saving": 39000,
+      "hra_exemption": 300000,
+      "presumptive_income": 0,
+      "digital_shift_saving": 0
+    }
+  },
+  {
+    "name": "hra_received_is_the_cap",
+    "input": {
+      "gross_salary": 1500000,
+      "basic_salary": 900000,
+      "investable_budget": 200000,
+      "hra_received": 60000,
+      "rent_paid": 480000,
+      "is_metro": true
+    },
+    "expected": {
+      "recommended_regime": "new",
+      "weighted_recommendation": "new",
+      "total_tax": 159120,
+      "old_tax_optimal": 195000,
+      "old_tax_no_discretionary": 257400,
+      "new_tax": 159120,
+      "budget_deployed": 200000,
+      "allocation": {
+        "section80C": 150000,
+        "section80CCD1B": 50000
+      },
+      "discretionary_saving": 62400,
+      "vs_other_regime_saving": 35880,
+      "hra_exemption": 60000,
+      "presumptive_income": 0,
+      "digital_shift_saving": 0
+    }
+  },
+  {
+    "name": "hra_rent_below_threshold_zero",
+    "input": {
+      "gross_salary": 1200000,
+      "basic_salary": 750000,
+      "investable_budget": 200000,
+      "hra_received": 300000,
+      "rent_paid": 60000,
+      "is_metro": true
+    },
+    "expected": {
+      "recommended_regime": "new",
+      "weighted_recommendation": "new",
+      "total_tax": 145600,
+      "old_tax_optimal": 195000,
+      "old_tax_no_discretionary": 257400,
+      "new_tax": 145600,
+      "budget_deployed": 200000,
+      "allocation": {
+        "section80C": 150000,
+        "section80CCD1B": 50000
+      },
+      "discretionary_saving": 62400,
+      "vs_other_regime_saving": 49400,
+      "hra_exemption": 0,
+      "presumptive_income": 0,
+      "digital_shift_saving": 0
+    }
+  },
+  {
+    "name": "s44ad_mixed_receipts_digital_lever",
+    "input": {
+      "business_digital_receipts": 8000000,
+      "business_cash_receipts": 4000000,
+      "investable_budget": 200000
+    },
+    "expected": {
+      "recommended_regime": "old",
+      "weighted_recommendation": "old",
+      "total_tax": 23400,
+      "old_tax_optimal": 23400,
+      "old_tax_no_discretionary": 65000,
+      "new_tax": 31200,
+      "budget_deployed": 200000,
+      "allocation": {
+        "section80C": 150000,
+        "section80CCD1B": 50000
+      },
+      "discretionary_saving": 41600,
+      "vs_other_regime_saving": 7800,
+      "hra_exemption": 0,
+      "presumptive_income": 800000,
+      "digital_shift_saving": 23400
+    }
+  },
+  {
+    "name": "s44ad_all_digital_6pct",
+    "input": {
+      "business_digital_receipts": 12000000,
+      "business_cash_receipts": 0,
+      "investable_budget": 200000
+    },
+    "expected": {
+      "recommended_regime": "old",
+      "weighted_recommendation": "old",
+      "total_tax": 0,
+      "old_tax_optimal": 0,
+      "old_tax_no_discretionary": 48360,
+      "new_tax": 0,
+      "budget_deployed": 200000,
+      "allocation": {
+        "section80C": 150000,
+        "section80CCD1B": 50000
+      },
+      "discretionary_saving": 48360,
+      "vs_other_regime_saving": 0,
+      "hra_exemption": 0,
+      "presumptive_income": 720000,
+      "digital_shift_saving": 0
+    }
+  },
+  {
+    "name": "s44ad_low_cash_raises_ceiling_to_3cr",
+    "input": {
+      "business_digital_receipts": 24000000,
+      "business_cash_receipts": 1000000
+    },
+    "expected": {
+      "recommended_regime": "new",
+      "weighted_recommendation": "new",
+      "total_tax": 149760,
+      "old_tax_optimal": 201240,
+      "old_tax_no_discretionary": 263640,
+      "new_tax": 149760,
+      "budget_deployed": 200000,
+      "allocation": {
+        "section80C": 150000,
+        "section80CCD1B": 50000
+      },
+      "discretionary_saving": 62400,
+      "vs_other_regime_saving": 51480,
+      "hra_exemption": 0,
+      "presumptive_income": 1520000,
+      "digital_shift_saving": 4160
+    }
+  },
+  {
+    "name": "s44ad_over_ceiling_on_actuals",
+    "input": {
+      "business_digital_receipts": 20000000,
+      "business_cash_receipts": 5000000,
+      "business_gross_receipts": 25000000,
+      "business_expenses": 21000000
+    },
+    "expected": {
+      "recommended_regime": "new",
+      "weighted_recommendation": "new",
+      "total_tax": 920400,
+      "old_tax_optimal": 975000,
+      "old_tax_no_discretionary": 1037400,
+      "new_tax": 920400,
+      "budget_deployed": 200000,
+      "allocation": {
+        "section80C": 150000,
+        "section80CCD1B": 50000
+      },
+      "discretionary_saving": 62400,
+      "vs_other_regime_saving": 54600,
+      "hra_exemption": 0,
+      "presumptive_income": 4000000,
+      "digital_shift_saving": 774800
+    }
+  },
+  {
+    "name": "salary_plus_s44ad_side_business",
+    "input": {
+      "gross_salary": 900000,
+      "basic_salary": 450000,
+      "business_digital_receipts": 1500000,
+      "business_cash_receipts": 500000,
+      "investable_budget": 150000
+    },
+    "expected": {
+      "recommended_regime": "new",
+      "weighted_recommendation": "new",
+      "total_tax": 59280,
+      "old_tax_optimal": 81640,
+      "old_tax_no_discretionary": 112840,
+      "new_tax": 59280,
+      "budget_deployed": 150000,
+      "allocation": {
+        "section80C": 150000,
+        "section80CCD1B": 0
+      },
+      "discretionary_saving": 31200,
+      "vs_other_regime_saving": 22360,
+      "hra_exemption": 0,
+      "presumptive_income": 130000,
+      "digital_shift_saving": 1560
     }
   }
 ]

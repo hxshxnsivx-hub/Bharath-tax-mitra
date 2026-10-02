@@ -319,7 +319,11 @@ async def calculate(body: CalculateRequest):
 async def assistant(body: AssistantRequest):
     # Imports resolve because the server runs as `python -m uvicorn` from backend/.
     from src.providers import ChatMessage, get_provider
-    from src.optimization.tax_optimizer import OptimizerInput, optimize
+    from src.optimization.tax_optimizer import (
+        OptimizerInput,
+        UnmodellableScenario,
+        optimize,
+    )
     from src.optimization.decision_engine import decide
 
     provider = get_provider()
@@ -340,22 +344,46 @@ async def assistant(body: AssistantRequest):
 
     # Dynamic, engine-verified recommendation when the scenario carries income.
     sc = body.scenario or {}
-    gross = sc.get("grossSalary")
-    if isinstance(gross, (int, float)) and gross > 0:
+    def _n(key: str) -> int:
+        v = sc.get(key)
+        return int(v) if isinstance(v, (int, float)) and v > 0 else 0
+
+    # Any income head is enough — a §44AD business may have no salary at all.
+    if _n("grossSalary") or _n("digitalReceipts") or _n("cashReceipts") or _n("grossReceipts"):
         inp = OptimizerInput(
-            gross_salary=int(gross),
+            gross_salary=_n("grossSalary"),
+            basic_salary=int(sc.get("basicSalary", 0) or 0),
             investable_budget=sc.get("investableBudget"),
             health_insurance_80d=int(sc.get("healthInsurance80D", 0) or 0),
             is_senior=bool(sc.get("isSenior", False)),
+            # Module 5.1.5 — HRA is old-regime-only, so omitting it biases the
+            # recommendation toward the new regime.
+            hra_received=int(sc.get("hraReceived", 0) or 0),
+            rent_paid=int(sc.get("rentPaid", 0) or 0),
+            is_metro=bool(sc.get("isMetro", False)),
+            # Module 5.1.5c — §44AD presumptive business.
+            business_digital_receipts=int(sc.get("digitalReceipts", 0) or 0),
+            business_cash_receipts=int(sc.get("cashReceipts", 0) or 0),
+            business_gross_receipts=int(sc.get("grossReceipts", 0) or 0),
+            business_expenses=int(sc.get("businessExpenses", 0) or 0),
         )
-        opt = optimize(inp)
-        dec = decide(inp, sc.get("weightProfile", "balanced"))
+        try:
+            opt = optimize(inp)
+            dec = decide(inp, sc.get("weightProfile", "balanced"))
+        except UnmodellableScenario as exc:
+            # Surface the refusal as content, not a 500 — the assistant should
+            # explain why it cannot answer rather than appear broken.
+            out["cannotCompute"] = str(exc)
+            return out
         out["recommendation"] = {
             "recommendedRegime": dec.recommended_regime,
             "totalTax": opt.total_tax,
             "oldTax": opt.old_tax_optimal,
             "newTax": opt.new_tax,
             "budgetDeployed": opt.budget_deployed,
+            "hraExemption": opt.hra_exemption,
+            "presumptiveIncome": opt.presumptive_income,
+            "digitalShiftSaving": opt.digital_shift_saving,
             "advocate": opt.advocate,
             "adversary": opt.adversary,
             "note": dec.note,

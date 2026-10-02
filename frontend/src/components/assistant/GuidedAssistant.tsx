@@ -35,6 +35,9 @@ interface Recommendation {
   totalTax: number;
   oldTax: number;
   newTax: number;
+  hraExemption?: number;
+  presumptiveIncome?: number;
+  digitalShiftSaving?: number;
   advocate: string[];
   adversary: string[];
   note: string;
@@ -44,18 +47,32 @@ type Message =
   | { role: 'bot' | 'user'; kind: 'text'; text: string }
   | { role: 'bot'; kind: 'subs'; category: AssistantCategory }
   | { role: 'bot'; kind: 'roadmap'; steps: RoadmapStep[]; categoryId?: string }
-  | { role: 'bot'; kind: 'scenario'; senior: boolean }
+  | { role: 'bot'; kind: 'scenario'; senior: boolean; business: boolean }
   | { role: 'bot'; kind: 'reco'; reco: Recommendation };
 
 interface ScenarioData {
   grossSalary: number;
+  basicSalary: number;
   investableBudget: number;
   healthInsurance80D: number;
   isSenior: boolean;
+  // HRA (Module 5.1.5). Old-regime-only, and usually the largest lever a
+  // salaried renter has — leaving it out biases the answer toward the new regime.
+  hraReceived: number;
+  rentPaid: number;
+  isMetro: boolean;
+  // §44AD presumptive business (Module 5.1.5c).
+  digitalReceipts: number;
+  cashReceipts: number;
 }
 
-// Categories the optimiser models accurately today (salary-slab based).
-const OPTIMIZABLE = new Set(['salaried', 'senior']);
+// Categories the optimiser models accurately today. Salary + HRA (5.1.5a) and
+// §44AD presumptive business (5.1.5c) are engine-verified; `investor` and
+// `property` stay out until 5.1.5b/5.1.5d land, because the engine does not yet
+// apply the §24(b) cap or the special LTCG/STCG rates.
+const OPTIMIZABLE = new Set(['salaried', 'senior', 'business', 'professional']);
+// Categories whose income is presumptive-business rather than salary.
+const BUSINESS_CATEGORIES = new Set(['business', 'professional']);
 
 interface RecognitionLike {
   lang: string;
@@ -205,9 +222,14 @@ export function GuidedAssistant({ onClose }: GuidedAssistantProps) {
   };
 
   const handleScenario = async (s: ScenarioData) => {
-    const summary =
-      `Annual salary ${inr(s.grossSalary)}, investing ${inr(s.investableBudget)}` +
+    const summary = (s.digitalReceipts || s.cashReceipts)
+      ? `Business receipts — digital ${inr(s.digitalReceipts)}, cash ${inr(s.cashReceipts)}` +
+        (s.investableBudget ? `, investing ${inr(s.investableBudget)}` : '') +
+        (s.healthInsurance80D ? `, health cover ${inr(s.healthInsurance80D)}` : '')
+      : `Annual salary ${inr(s.grossSalary)}, investing ${inr(s.investableBudget)}` +
       (s.healthInsurance80D ? `, health cover ${inr(s.healthInsurance80D)}` : '') +
+      (s.hraReceived ? `, HRA ${inr(s.hraReceived)}` : '') +
+      (s.rentPaid ? `, rent ${inr(s.rentPaid)}${s.isMetro ? ' (metro)' : ''}` : '') +
       (s.isSenior ? ', senior citizen' : '');
     setMessages((m) => [...m, { role: 'user', kind: 'text', text: summary }]);
     setThinking(true);
@@ -220,9 +242,15 @@ export function GuidedAssistant({ onClose }: GuidedAssistantProps) {
           language: lang,
           scenario: {
             grossSalary: s.grossSalary,
+            basicSalary: s.basicSalary,
             investableBudget: s.investableBudget,
             healthInsurance80D: s.healthInsurance80D,
             isSenior: s.isSenior,
+            hraReceived: s.hraReceived,
+            rentPaid: s.rentPaid,
+            isMetro: s.isMetro,
+            digitalReceipts: s.digitalReceipts,
+            cashReceipts: s.cashReceipts,
           },
         }),
       });
@@ -231,6 +259,10 @@ export function GuidedAssistant({ onClose }: GuidedAssistantProps) {
       setThinking(false);
       if (data.recommendation) {
         setMessages((m) => [...m, { role: 'bot', kind: 'reco', reco: data.recommendation }]);
+      } else if (data.cannotCompute) {
+        // The optimiser abstained rather than return a figure it cannot stand
+        // behind — show its reason instead of a generic failure.
+        setMessages((m) => [...m, { role: 'bot', kind: 'text', text: data.cannotCompute }]);
       } else {
         setMessages((m) => [...m, { role: 'bot', kind: 'text', text: t('assistant.noEstimate', { defaultValue: "I couldn't compute an estimate for that input." }) }]);
       }
@@ -358,6 +390,30 @@ export function GuidedAssistant({ onClose }: GuidedAssistantProps) {
                     <span>Old {inr(m.reco.oldTax)}</span>
                     <span>New {inr(m.reco.newTax)}</span>
                   </div>
+                  {!!m.reco.hraExemption && (
+                    <div className="flex items-baseline justify-between text-[11px] pt-0.5">
+                      <span className="text-gray-500">
+                        {t('assistant.hraExemption', { defaultValue: 'HRA exemption applied' })}
+                      </span>
+                      <span className="font-mono tabular-nums text-[hsl(var(--gold-deep))]">{inr(m.reco.hraExemption)}</span>
+                    </div>
+                  )}
+                  {!!m.reco.presumptiveIncome && (
+                    <div className="flex items-baseline justify-between text-[11px] pt-0.5">
+                      <span className="text-gray-500">
+                        {t('assistant.presumptiveIncome', { defaultValue: 'Presumed profit (§44AD)' })}
+                      </span>
+                      <span className="font-mono tabular-nums text-[hsl(var(--gold-deep))]">{inr(m.reco.presumptiveIncome)}</span>
+                    </div>
+                  )}
+                  {!!m.reco.digitalShiftSaving && (
+                    <div className="flex items-baseline justify-between text-[11px]">
+                      <span className="text-gray-500">
+                        {t('assistant.digitalShift', { defaultValue: 'If all receipts were digital' })}
+                      </span>
+                      <span className="font-mono tabular-nums text-[hsl(var(--gold-deep))]">−{inr(m.reco.digitalShiftSaving)}</span>
+                    </div>
+                  )}
                   {m.reco.advocate[0] && <p className="text-xs text-foreground leading-relaxed pt-1">{m.reco.advocate[0]}</p>}
                   {m.reco.adversary[0] && <p className="text-xs text-gray-500 leading-relaxed">{m.reco.adversary[0]}</p>}
                 </div>
@@ -365,7 +421,7 @@ export function GuidedAssistant({ onClose }: GuidedAssistantProps) {
             );
           }
           if (m.kind === 'scenario') {
-            return <ScenarioForm key={i} senior={m.senior} onSubmit={handleScenario} />;
+            return <ScenarioForm key={i} senior={m.senior} business={m.business} onSubmit={handleScenario} />;
           }
           // roadmap
           return (
@@ -403,7 +459,7 @@ export function GuidedAssistant({ onClose }: GuidedAssistantProps) {
                 </button>
                 {m.categoryId && OPTIMIZABLE.has(m.categoryId) && (
                   <button
-                    onClick={() => setMessages((mm) => [...mm, { role: 'bot', kind: 'scenario', senior: m.categoryId === 'senior' }])}
+                    onClick={() => setMessages((mm) => [...mm, { role: 'bot', kind: 'scenario', senior: m.categoryId === 'senior', business: BUSINESS_CATEGORIES.has(m.categoryId ?? '') }])}
                     className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border border-[hsl(var(--gold))] text-[hsl(var(--gold-deep))] hover:bg-[hsl(var(--muted))]"
                   >
                     {Icon.chart}
@@ -481,14 +537,24 @@ export function GuidedAssistant({ onClose }: GuidedAssistantProps) {
 }
 
 // Compact in-chat scenario collector — feeds the optimiser via /assistant.
-function ScenarioForm({ senior, onSubmit }: { senior: boolean; onSubmit: (s: ScenarioData) => void }) {
+function ScenarioForm({ senior, business, onSubmit }: { senior: boolean; business: boolean; onSubmit: (s: ScenarioData) => void }) {
   const { t } = useTranslation();
   const [salary, setSalary] = useState('');
+  const [basic, setBasic] = useState('');
   const [invest, setInvest] = useState('');
   const [health, setHealth] = useState('');
   const [isSenior, setIsSenior] = useState(senior);
+  // HRA is only asked for when it can actually apply, so non-renters still see
+  // a short form. Rule 2A needs basic salary AND rent AND HRA received.
+  const [paysRent, setPaysRent] = useState(false);
+  const [hra, setHra] = useState('');
+  const [rent, setRent] = useState('');
+  const [isMetro, setIsMetro] = useState(false);
+  // §44AD receipts, shown only for business/professional categories.
+  const [digital, setDigital] = useState('');
+  const [cash, setCash] = useState('');
   const num = (v: string) => parseInt(v.replace(/\D/g, ''), 10) || 0;
-  const canSubmit = num(salary) > 0;
+  const canSubmit = business ? num(digital) + num(cash) > 0 : num(salary) > 0;
 
   const field = (label: string, value: string, set: (v: string) => void, placeholder: string) => (
     <div>
@@ -508,16 +574,56 @@ function ScenarioForm({ senior, onSubmit }: { senior: boolean; onSubmit: (s: Sce
       <p className="text-xs font-display font-semibold text-foreground">
         {t('assistant.quickEstimate', { defaultValue: 'Quick estimate' })}
       </p>
-      {field(t('assistant.annualSalary', { defaultValue: 'Annual salary (₹)' }), salary, setSalary, 'e.g. 1500000')}
+      {business && (
+        <>
+          <p className="text-[11px] text-gray-500 leading-snug">
+            {t('assistant.s44adNote', { defaultValue: 'Under §44AD, profit is presumed at 6% of digital receipts and 8% of cash — no books of account needed.' })}
+          </p>
+          {field(t('assistant.digitalReceipts', { defaultValue: 'Digital receipts (₹/year)' }), digital, setDigital, 'e.g. 8000000')}
+          {field(t('assistant.cashReceipts', { defaultValue: 'Cash receipts (₹/year)' }), cash, setCash, 'e.g. 4000000')}
+        </>
+      )}
+      {!business && field(t('assistant.annualSalary', { defaultValue: 'Annual salary (₹)' }), salary, setSalary, 'e.g. 1200000')}
+      {!business && field(t('assistant.basicSalary', { defaultValue: 'Basic salary (₹)' }), basic, setBasic, 'e.g. 750000')}
       {field(t('assistant.investAmount', { defaultValue: 'You invest — 80C / NPS (₹)' }), invest, setInvest, 'e.g. 200000')}
       {field(t('assistant.healthPremium', { defaultValue: 'Health insurance premium (₹)' }), health, setHealth, 'optional')}
+      {!business && (
+        <label className="flex items-center gap-2 text-xs text-gray-600">
+          <input type="checkbox" checked={paysRent} onChange={(e) => setPaysRent(e.target.checked)} className="accent-[hsl(var(--gold))]" />
+          {t('assistant.paysRent', { defaultValue: 'I pay rent and receive HRA' })}
+        </label>
+      )}
+      {paysRent && !business && (
+        <div className="space-y-2.5 pl-5 border-l border-[hsl(var(--border))]">
+          <p className="text-[11px] text-gray-500 leading-snug">
+            {t('assistant.hraNote', { defaultValue: 'Enter HRA separately from the salary above — it is added on top, not taken out of it.' })}
+          </p>
+          {field(t('assistant.hraReceived', { defaultValue: 'HRA received (₹/year)' }), hra, setHra, 'e.g. 300000')}
+          {field(t('assistant.rentPaid', { defaultValue: 'Rent paid (₹/year)' }), rent, setRent, 'e.g. 360000')}
+          <label className="flex items-center gap-2 text-xs text-gray-600">
+            <input type="checkbox" checked={isMetro} onChange={(e) => setIsMetro(e.target.checked)} className="accent-[hsl(var(--gold))]" />
+            {t('assistant.isMetro', { defaultValue: 'Metro city (Delhi, Mumbai, Kolkata, Chennai)' })}
+          </label>
+        </div>
+      )}
       <label className="flex items-center gap-2 text-xs text-gray-600">
         <input type="checkbox" checked={isSenior} onChange={(e) => setIsSenior(e.target.checked)} className="accent-[hsl(var(--gold))]" />
         {t('assistant.seniorCitizen', { defaultValue: 'Senior citizen (60+)' })}
       </label>
       <button
         disabled={!canSubmit}
-        onClick={() => onSubmit({ grossSalary: num(salary), investableBudget: num(invest), healthInsurance80D: num(health), isSenior })}
+        onClick={() => onSubmit({
+          grossSalary: num(salary),
+          basicSalary: num(basic),
+          investableBudget: num(invest),
+          healthInsurance80D: num(health),
+          isSenior,
+          hraReceived: paysRent && !business ? num(hra) : 0,
+          rentPaid: paysRent && !business ? num(rent) : 0,
+          isMetro: paysRent && !business && isMetro,
+          digitalReceipts: business ? num(digital) : 0,
+          cashReceipts: business ? num(cash) : 0,
+        })}
         className="w-full btn-gold rounded-lg py-2 text-sm font-medium disabled:opacity-40"
       >
         {t('assistant.showPlan', { defaultValue: 'Show my optimal plan' })}

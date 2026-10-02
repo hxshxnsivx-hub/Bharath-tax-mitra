@@ -6,6 +6,7 @@ import { AuthFlow } from './components/AuthFlow';
 import { AmbientBackground } from './components/layout/AmbientBackground';
 import { MainApp } from './pages/MainApp';
 import { db } from './lib/db';
+import { maybeDevAutoLogin } from './lib/devAutoLogin';
 
 export interface AuthState {
   isAuthenticated: boolean;
@@ -27,6 +28,19 @@ function App() {
   useEffect(() => {
     async function checkExistingSession() {
       try {
+        // Dev-only OTP bypass. No-op unless VITE_DEV_AUTOLOGIN=true AND this is
+        // a dev build — the whole branch is stripped from production bundles.
+        const devSession = await maybeDevAutoLogin();
+        if (devSession) {
+          setAuthState({
+            isAuthenticated: true,
+            userId: devSession.userId,
+            preferredLanguage: devSession.languageCode,
+            preferredRegime: devSession.preferredRegime,
+          });
+          return;
+        }
+
         const profiles = await db.profiles.toArray();
         if (profiles.length > 0) {
           const profile = profiles[0];

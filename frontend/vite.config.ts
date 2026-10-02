@@ -176,7 +176,13 @@ export default defineConfig({
   build: {
     target: 'esnext',
     minify: 'terser',
-    sourcemap: true,
+    // 'hidden' still EMITS .map files (so error-reporting tools that upload
+    // maps out-of-band keep working) but omits the //# sourceMappingURL
+    // comment, so browsers and casual visitors no longer auto-fetch the full
+    // original source of a tax application. Was `true`; changed 2026-08-05
+    // after a production build was found to publish every source file,
+    // including the dev-only OTP bypass in src/lib/devAutoLogin.ts.
+    sourcemap: 'hidden',
     // Warn (and fail CI) when any chunk exceeds 500 KB — Tier-2/3 network budget
     chunkSizeWarningLimit: 500,
     // Show Brotli/gzip compressed sizes in the build output

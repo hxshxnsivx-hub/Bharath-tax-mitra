@@ -13,6 +13,8 @@ This keeps the tests honest (no re-implemented tax maths to drift) and offline
 (pure Python, no network).
 """
 
+import pytest
+
 from src.lambdas.tax_calculation.calculate import (
     calculate_new_regime,
     calculate_old_regime,
@@ -23,6 +25,7 @@ from src.optimization.tax_optimizer import (
     _allocate,
     _deductions_dict,
     _income_dict,
+    UnmodellableScenario,
     _personal_info,
     optimize,
 )
@@ -112,3 +115,156 @@ def test_result_serialises():
     assert d["totalTax"] == res.total_tax
     assert isinstance(d["advocate"], list) and isinstance(d["adversary"], list)
     assert d["allocation"]["section80C"] + d["allocation"]["section80CCD1B"] == res.budget_deployed
+
+
+# ── Module 5.1.5: HRA coverage ────────────────────────────────────────────────
+# Before 5.1.5 the optimiser hardcoded hraReceived=0 and passed no rent, so the
+# Rule 2A exemption — old-regime-only, and often the largest single lever a
+# salaried renter has — was invisible. That silently biased every recommendation
+# toward the new regime. These tests pin the behaviour so it cannot regress.
+
+
+def test_hra_flips_recommendation_for_metro_renter():
+    """
+    Regression tripwire. Same taxpayer, ₹15L total compensation, ₹7.5L basic,
+    ₹30k/month metro rent. Modelled as pure salary the new regime looks ₹41,350
+    cheaper; once HRA and rent are modelled the old regime is ₹41,080 cheaper.
+    Acting on the pre-5.1.5 answer costs this taxpayer real money.
+    """
+    as_pure_salary = optimize(
+        OptimizerInput(gross_salary=1_500_000, basic_salary=750_000,
+                       professional_tax=2_400, health_insurance_80d=25_000)
+    )
+    with_hra = optimize(
+        OptimizerInput(gross_salary=1_200_000, basic_salary=750_000,
+                       professional_tax=2_400, health_insurance_80d=25_000,
+                       hra_received=300_000, rent_paid=360_000, is_metro=True)
+    )
+
+    assert as_pure_salary.recommended_regime == "new"
+    assert with_hra.recommended_regime == "old"
+
+    # The new-regime figure is identical in both runs (HRA is old-regime-only),
+    # which is what makes this a controlled comparison rather than two scenarios.
+    assert as_pure_salary.new_tax == with_hra.new_tax
+
+    # Rule 2A minimum: min(3,00,000 received, 3,60,000 - 10% of 7,50,000, 50% of 7,50,000)
+    assert with_hra.hra_exemption == 285_000
+
+
+def test_hra_exemption_matches_engine_not_optimiser_maths():
+    """The reported exemption must come off the engine's deduction breakdown."""
+    inp = OptimizerInput(gross_salary=1_200_000, basic_salary=600_000,
+                         hra_received=240_000, rent_paid=300_000, is_metro=False)
+    res = optimize(inp)
+    engine = calculate_old_regime(
+        _income_dict(inp), _deductions_dict(inp, _allocate(inp.investable_budget)),
+        {"isSeniorCitizen": False, "isSuperSeniorCitizen": False, "residentialStatus": "resident"},
+    )
+    assert res.hra_exemption == engine["deductionBreakdown"]["hra"]
+
+
+def test_hra_needs_both_rent_and_receipt():
+    """Rule 2A yields nothing if either leg is missing — no phantom exemption."""
+    base = dict(gross_salary=1_200_000, basic_salary=750_000)
+    assert optimize(OptimizerInput(**base, hra_received=300_000, rent_paid=0)).hra_exemption == 0
+    assert optimize(OptimizerInput(**base, hra_received=0, rent_paid=360_000)).hra_exemption == 0
+
+
+def test_metro_status_never_lowers_the_exemption():
+    """Metro caps at 50% of basic vs 40% — metro is weakly better, never worse."""
+    for rent in (120_000, 360_000, 600_000):
+        kw = dict(gross_salary=1_200_000, basic_salary=750_000,
+                  hra_received=300_000, rent_paid=rent)
+        assert (optimize(OptimizerInput(**kw, is_metro=True)).hra_exemption
+                >= optimize(OptimizerInput(**kw, is_metro=False)).hra_exemption)
+
+
+def test_hra_never_raises_old_regime_tax():
+    """Monotonicity: an exemption is a deduction — it cannot increase tax."""
+    for rent in (0, 100_000, 360_000, 900_000):
+        inp = OptimizerInput(gross_salary=1_200_000, basic_salary=750_000,
+                             hra_received=300_000, rent_paid=rent, is_metro=True)
+        res = optimize(inp)
+        no_rent = optimize(
+            OptimizerInput(gross_salary=1_200_000, basic_salary=750_000,
+                           hra_received=300_000, rent_paid=0, is_metro=True)
+        )
+        assert res.old_tax_optimal <= no_rent.old_tax_optimal
+
+
+def test_hra_without_rent_warns_in_adversary():
+    """Receiving HRA but reporting no rent is a prompt, not a silent zero."""
+    res = optimize(
+        OptimizerInput(gross_salary=1_500_000, basic_salary=750_000, hra_received=300_000)
+    )
+    assert res.recommended_regime == "new"
+    assert any("no rent" in a.lower() for a in res.adversary)
+
+
+# ── Module 5.1.5c: §44AD presumptive business ─────────────────────────────────
+# Unlike HRA, 44AD carries a genuine LEVER: digital receipts are presumed at 6%
+# against 8% for cash, and a ≤5%-cash business is judged against a ₹3Cr ceiling
+# rather than ₹2Cr. Both are lawful planning choices.
+
+
+def test_presumptive_income_matches_statutory_rates():
+    """6% of digital + 8% of cash, read back off the engine's income breakdown."""
+    res = optimize(OptimizerInput(business_digital_receipts=8_000_000,
+                                  business_cash_receipts=4_000_000,
+                                  investable_budget=200_000))
+    assert res.presumptive_income == int(8_000_000 * 0.06 + 4_000_000 * 0.08)
+
+
+def test_digital_shift_is_priced_by_the_engine_not_the_optimiser():
+    """
+    The all-digital counterfactual must be scored by re-running the engine, and
+    the saving must equal the real difference in tax between the two mixes.
+    """
+    mixed = OptimizerInput(business_digital_receipts=8_000_000,
+                           business_cash_receipts=4_000_000, investable_budget=200_000)
+    all_digital = OptimizerInput(business_digital_receipts=12_000_000,
+                                 business_cash_receipts=0, investable_budget=200_000)
+    res, alt = optimize(mixed), optimize(all_digital)
+    assert res.digital_shift_saving == res.total_tax - alt.total_tax
+    assert alt.presumptive_income < res.presumptive_income  # 6% beats the 8% leg
+
+
+def test_no_digital_lever_when_there_is_no_cash():
+    res = optimize(OptimizerInput(business_digital_receipts=5_000_000, business_cash_receipts=0))
+    assert res.digital_shift_saving == 0
+
+
+def test_over_ceiling_without_actuals_is_refused_not_guessed():
+    """
+    Abstention over a confident wrong number. Before the guard the engine fell
+    back to grossReceipts - expenses, which defaulted to zero — so an over-ceiling
+    business was quietly scored on NO income at all.
+    """
+    over = OptimizerInput(business_digital_receipts=20_000_000, business_cash_receipts=5_000_000)
+    with pytest.raises(UnmodellableScenario):
+        optimize(over)
+
+
+def test_over_ceiling_with_actuals_scores_on_actuals():
+    res = optimize(OptimizerInput(business_digital_receipts=20_000_000,
+                                  business_cash_receipts=5_000_000,
+                                  business_gross_receipts=25_000_000,
+                                  business_expenses=21_000_000))
+    assert res.presumptive_income == 4_000_000  # 2.5Cr - 2.1Cr, actuals not presumption
+
+
+def test_five_percent_cash_raises_the_ceiling_to_3cr():
+    """≤5% cash is judged against ₹3Cr, so ₹2.5Cr stays inside the scheme."""
+    mostly_digital = OptimizerInput(business_digital_receipts=24_000_000,
+                                    business_cash_receipts=1_000_000)  # 4% cash
+    res = optimize(mostly_digital)  # must NOT raise
+    assert res.presumptive_income == int(24_000_000 * 0.06 + 1_000_000 * 0.08)
+
+
+def test_salary_only_taxpayer_is_unaffected_by_the_business_head():
+    """The head is attached only when it carries something."""
+    res = optimize(OptimizerInput(gross_salary=1_200_000, investable_budget=200_000))
+    assert res.presumptive_income == 0
+    assert res.digital_shift_saving == 0
+    assert "businessIncome" not in _income_dict(OptimizerInput(gross_salary=1_200_000))
